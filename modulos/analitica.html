@@ -1,0 +1,1160 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kairos Analítica</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap">
+<script>(function(){try{var p=window.parent;if(p!==window&&p.KAIROS_SHELL){var d=document.documentElement;d.classList.add('in-kairos');var th=p.document.documentElement.getAttribute('data-theme');if(th)d.setAttribute('data-theme',th);window.KAIROS_SHELL=p.KAIROS_SHELL;}}catch(e){}})();</script>
+<script src="ejecucion-data.js"></script>
+<style>
+/* Analitica · tokens del shell de Kairos Ecosistema; diseno aprobado en «Boceto Analitica» (30-oct) */
+:root {
+  --font: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  --navy: #001c3f; --blue: #002473; --bright: #0a58eb; --cyan: #00dcfa; --violet: #7543ff;
+  --bg: #f2f5f9; --surface: #fff; --surface-2: #f6f8fb; --ink: #001c3f; --muted: #556578; --line: #dbe2ea; --line-2: #eef2f6;
+  --primary: #002473; --primary-ink: #fff; --primary-soft: #e8eefc; --focus: #0a58eb;
+  --ok-bg: #e5f7ee; --ok-ink: #145a37; --ok: #1f9d63; --warn-bg: #fff4e0; --warn-ink: #7a4a00; --warn: #e09a1a; --err-bg: #fbeaeb; --err-ink: #b0353c; --err: #c8353f;
+  --p-TC1: #9fb3c8; --p-TC2: #6c87a8; --p-E1: #00b8d9; --p-E2: #0a58eb; --p-E3: #002473; --p-E4: #7543ff; --p-E5: #e3a008;
+  --exec: #002473; --quot: #9fb3c8; --rest: #1f9d63; --over: #c8353f; --off-bg: #eef2f6; --off-ink: #8593a5;
+  --shadow: 0 8px 20px rgba(0,28,63,.16); --shadow-sm: 0 2px 8px rgba(0,28,63,.08); --r-ctl: 8px; --r-surf: 12px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #07111f; --surface: #0d1b2f; --surface-2: #112339; --ink: #e7eef7; --muted: #9db0c5; --line: #22385a; --line-2: #182b45; --navy: #e7eef7;
+  --primary: #5d8dff; --primary-ink: #04122a; --primary-soft: #16294a; --focus: #7fb0ff; --bright: #7fb0ff;
+  --ok-bg: #0e3324; --ok-ink: #8fe3b6; --ok: #3fc98a; --warn-bg: #3a2a0c; --warn-ink: #ffd28a; --warn: #f0b440; --err-bg: #3d1519; --err-ink: #ff7a80; --err: #ff6b73;
+  --p-E3: #5d8dff; --exec: #5d8dff; --quot: #4a5d78; --rest: #3fc98a; --over: #ff6b73; --off-bg: #132439; --off-ink: #7a8ea6;
+  --shadow: 0 12px 32px rgba(0,0,0,.55); --shadow-sm: 0 2px 8px rgba(0,0,0,.4); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #07111f; --surface: #0d1b2f; --surface-2: #112339; --ink: #e7eef7; --muted: #9db0c5; --line: #22385a; --line-2: #182b45; --navy: #e7eef7;
+  --primary: #5d8dff; --primary-ink: #04122a; --primary-soft: #16294a; --focus: #7fb0ff; --bright: #7fb0ff;
+  --ok-bg: #0e3324; --ok-ink: #8fe3b6; --ok: #3fc98a; --warn-bg: #3a2a0c; --warn-ink: #ffd28a; --warn: #f0b440; --err-bg: #3d1519; --err-ink: #ff7a80; --err: #ff6b73;
+  --p-E3: #5d8dff; --exec: #5d8dff; --quot: #4a5d78; --rest: #3fc98a; --over: #ff6b73; --off-bg: #132439; --off-ink: #7a8ea6;
+  --shadow: 0 12px 32px rgba(0,0,0,.55); --shadow-sm: 0 2px 8px rgba(0,0,0,.4); color-scheme: dark; }
+@property --n { syntax: '<integer>'; inherits: false; initial-value: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 14px; line-height: 1.5; font-variant-numeric: tabular-nums; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; text-align: left; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+h1, h2, h3, h4, p { margin: 0; text-wrap: balance; }
+.wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+.ic { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.muted { color: var(--muted); } .sm { font-size: 12px; } .b { font-weight: 600; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.sp { flex: 1 1 auto; }
+/* encabezado y navegacion */
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.head h1, h1.ttl { font-size: 24px; font-weight: 600; letter-spacing: -.01em; line-height: 1.25; }
+.head p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.crumb button { color: var(--muted); display: inline-flex; align-items: center; gap: 6px; } .crumb button:hover { color: var(--bright); }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px 26px; border-bottom: 1px solid var(--line); }
+.tabs button { padding: 8px 0 11px; font-size: 14px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-selected=true] { color: var(--ink); font-weight: 600; border-bottom-color: var(--primary); }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; background: var(--line-2); border: 1px solid var(--line); border-radius: var(--r-ctl); flex: none; }
+.seg button { padding: 6px 12px; font-size: 13px; color: var(--muted); border-radius: 6px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.seg button[aria-pressed=true] { background: var(--surface); color: var(--ink); font-weight: 500; box-shadow: var(--shadow-sm); }
+.seg b { font-weight: 500; font-size: 12px; padding: 0 7px; border-radius: 999px; background: var(--line); color: var(--muted); }
+.seg b.w { background: var(--warn-bg); color: var(--warn-ink); } .seg b.e { background: var(--err-bg); color: var(--err-ink); }
+select, input[type=search], input[type=number] { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-ctl); padding: 7px 12px; font-size: 13px; max-width: 100%; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-ctl); padding: 6px 12px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { border-color: var(--bright); } .btn.pri { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
+.lnk { color: var(--bright); font-size: 13px; font-weight: 500; } .lnk:hover { text-decoration: underline; }
+.tg { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; position: relative; }
+.tg i { width: 34px; height: 20px; border-radius: 10px; background: var(--line); position: relative; transition: background .15s; }
+.tg i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.tg input:checked + i { background: var(--bright); } .tg input:checked + i::after { transform: translateX(14px); }
+.tg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.tg input:focus-visible + i { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* superficies */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-surf); padding: 16px; min-width: 0; }
+.cardh { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: -16px -16px 16px; padding: 14px 16px; border-bottom: 1px solid var(--line-2); }
+.card h3 { font-size: 14px; font-weight: 600; }
+.card.flush { padding: 0; overflow: hidden; } .card.flush .cardh { margin: 0; }
+.cardf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--line-2); font-size: 12px; color: var(--muted); }
+.eyebrow { font-size: 12px; color: var(--muted); font-weight: 500; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 20px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.pill.ok { background: var(--ok-bg); color: var(--ok-ink); } .pill.warn { background: var(--warn-bg); color: var(--warn-ink); }
+.pill.err { background: var(--err-bg); color: var(--err-ink); } .pill.off { background: var(--off-bg); color: var(--muted); }
+.pill.pri { background: var(--primary-soft); color: var(--primary); }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; display: inline-block; background: var(--off-ink); }
+.sq { width: 10px; height: 10px; border-radius: 3px; flex: none; display: inline-block; }
+.sim { display: inline-flex; align-items: center; border: 1px dashed var(--line); color: var(--muted); border-radius: 4px; padding: 1px 8px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.leg { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: var(--muted); }
+.leg span { display: inline-flex; align-items: center; gap: 6px; }
+.leg i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+/* numerales */
+.big { font-size: 44px; font-weight: 300; line-height: 1; letter-spacing: -.02em; }
+.mid { font-size: 30px; font-weight: 300; line-height: 1; letter-spacing: -.02em; }
+.huge { font-size: 64px; font-weight: 300; line-height: 1; letter-spacing: -.03em; }
+.lab { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.cnts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin: 4px -16px; }
+.cnt { display: flex; flex-direction: column; gap: 8px; padding: 4px 24px; border-left: 1px solid var(--line-2); min-width: 0; }
+.cnt:first-child { border-left: 0; }
+/* barras */
+.ub { position: relative; display: block; height: 6px; border-radius: 3px; background: var(--line-2); min-width: 40px; }
+.ub i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--primary); }
+.ub u { position: absolute; top: -3px; bottom: -3px; width: 2px; border-radius: 1px; background: var(--navy); transform: translateX(-1px); }
+.stk { display: flex; gap: 2px; }
+.stk i { display: block; border-radius: 4px; min-width: 0; }
+.hb { display: flex; flex-direction: column; gap: 12px; }
+.hb .r, .cmp { display: grid; grid-template-columns: minmax(0, 30%) minmax(0, 1fr) auto; gap: 12px; align-items: center; font-size: 13px; }
+.hb .r > span:first-child, .cmp > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; color: var(--muted); }
+.hb .r b, .cmp b { font-weight: 500; }
+.trk { position: relative; display: block; height: 8px; background: var(--line-2); border-radius: 4px; min-width: 0; }
+.trk .f { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--exec); }
+.trk .f.over { background: var(--over); } .trk .f.q { background: var(--quot); }
+.trk .mk { position: absolute; top: -4px; bottom: -4px; width: 2px; border-radius: 1px; background: var(--navy); }
+/* listas y tablas */
+.att { display: flex; flex-direction: column; margin: -16px -16px -16px; }
+.att .it { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line-2); width: 100%; }
+.att .it:last-child { border-bottom: 0; }
+.att button.it:hover .nm { color: var(--bright); }
+.nm { font-weight: 500; font-size: 14px; overflow-wrap: anywhere; }
+.alerts { display: flex; flex-direction: column; gap: 8px; }
+.al { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border: 1px solid var(--line); border-left-width: 3px; border-radius: var(--r-ctl); padding: 9px 12px; font-size: 13px; }
+.al.err { border-left-color: var(--err); background: var(--err-bg); } .al.warn { border-left-color: var(--warn); background: var(--warn-bg); } .al.ok { border-left-color: var(--ok); background: var(--ok-bg); }
+.al .t { flex: 1 1 220px; min-width: 0; }
+.al .btn { padding: 3px 10px; font-size: 12px; }
+.tbl { overflow-x: auto; max-width: 100%; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 460px; }
+th, td { padding: 9px 12px; border-bottom: 1px solid var(--line-2); text-align: left; white-space: nowrap; }
+th { font-size: 12px; color: var(--muted); font-weight: 500; background: var(--surface-2); position: sticky; top: 0; }
+td.n, th.n { text-align: right; } tr.tot td { font-weight: 600; border-top: 1px solid var(--line); }
+td.red { color: var(--err-ink); font-weight: 600; }
+details.alt { margin-top: 12px; } details.alt summary { cursor: pointer; font-size: 12px; color: var(--bright); font-weight: 500; }
+.grid { display: grid; column-gap: 16px; align-items: center; padding: 0 16px; }
+.grid.hd { padding-top: 9px; padding-bottom: 9px; background: var(--surface-2); border-bottom: 1px solid var(--line-2); font-size: 12px; color: var(--muted); }
+.grid.rw { padding-top: 13px; padding-bottom: 13px; border-bottom: 1px solid var(--line-2); }
+.grid.rw[data-go] { cursor: pointer; } .grid.rw[data-go]:hover { background: var(--surface-2); }
+.grid.rw.kid { padding-left: 40px; background: var(--surface-2); }
+.grid span.n { text-align: right; } .grid.rw.rgsub { background: var(--surface-2); }
+button.lnk { border: 0; background: none; padding: 0; cursor: pointer; font: inherit; color: var(--ink); text-align: left; }
+.cp { grid-template-columns: 112px minmax(240px, 2.2fr) minmax(130px, 1.3fr) repeat(4, minmax(88px, 1fr)) minmax(110px, 1fr); }
+.kc { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+.kc i { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+.tw { color: var(--bright); font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+/* indicadores del detalle */
+.hero { display: flex; flex-wrap: wrap; padding: 0; }
+.hero .hl { flex: 1.6 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 20px; padding: 24px 28px; }
+.hero .hr { flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; padding: 24px 28px; background: var(--surface-2); border-left: 1px solid var(--line-2); border-radius: 0 var(--r-surf) var(--r-surf) 0; }
+.kv { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); }
+.kv span:first-child { color: var(--muted); }
+.scale { position: relative; height: 32px; }
+.scale .ml { position: absolute; top: 0; transform: translateX(-50%); font-size: 11px; color: var(--muted); white-space: nowrap; }
+.scale .tr { position: absolute; left: 0; right: 0; top: 20px; height: 8px; border-radius: 4px; background: var(--line-2); }
+.scale .fl { position: absolute; left: 0; top: 20px; height: 8px; border-radius: 4px; }
+.scale .tk { position: absolute; top: 14px; width: 2px; height: 20px; border-radius: 1px; background: var(--navy); }
+.kpl { display: flex; flex-wrap: wrap; margin: -4px -16px; }
+.kpl .k { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 4px 20px; border-left: 1px solid var(--line-2); }
+.kpl .k:first-child { border-left: 0; }
+.kpl .cs { font-size: 12px; color: var(--muted); }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-surf); padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.kpi .v { font-size: 30px; font-weight: 300; line-height: 1.1; letter-spacing: -.02em; }
+.kpi .causa { font-size: 12px; color: var(--muted); }
+.kpi.err { border-left: 3px solid var(--err); } .kpi.warn { border-left: 3px solid var(--warn); } .kpi.ok { border-left: 3px solid var(--ok); }
+/* ocupacion */
+.weeks { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.icon-btn { width: 34px; height: 34px; border-radius: var(--r-ctl); display: inline-flex; align-items: center; justify-content: center; color: var(--muted); flex: none; border: 1px solid var(--line); background: var(--surface); }
+.icon-btn:hover:not(:disabled) { background: var(--surface-2); color: var(--ink); } .icon-btn:disabled { opacity: .4; cursor: default; }
+.wlist { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1; padding: 11px 2px 2px; }
+.wlist::-webkit-scrollbar { display: none; }
+.wk { position: relative; flex: 1 0 104px; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 7px 10px; border-radius: var(--r-ctl); border: 1px solid var(--line); background: var(--surface); }
+.wk b { font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.wk small { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.wk[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+.wk[aria-pressed="true"] small { color: inherit; opacity: .85; }
+.wk.cur::after { content: "Hoy"; position: absolute; top: -9px; right: 8px; z-index: 1; font-size: 10px; font-weight: 600; padding: 0 6px; border-radius: 999px; background: var(--bright); color: #fff; box-shadow: 0 0 0 2px var(--bg); }
+.oc { grid-template-columns: minmax(220px, 1.4fr) repeat(var(--nw, 4), minmax(86px, 1fr)); column-gap: 8px; }
+.oc.rw { padding-top: 8px; padding-bottom: 8px; }
+.cell { height: 36px; border-radius: var(--r-ctl); display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.cell.sub { background: var(--warn-bg); color: var(--warn-ink); } .cell.ok { background: var(--primary-soft); color: var(--primary); } .cell.sobre { background: var(--err-bg); color: var(--err-ink); }
+.av { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; flex: none; background: var(--blue); display: inline-flex; }
+.av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.av .ini { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 11px; }
+/* estados */
+.state { text-align: center; padding: 40px 16px; color: var(--muted); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.state h3 { color: var(--ink); }
+.sk { background: linear-gradient(90deg, var(--line-2), var(--line), var(--line-2)); background-size: 200% 100%; animation: sk 1.2s linear infinite; border-radius: var(--r-surf); height: 76px; }
+@keyframes sk { to { background-position: -200% 0; } }
+.banner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border: 1px solid var(--warn); background: var(--warn-bg); color: var(--warn-ink); border-radius: var(--r-ctl); padding: 9px 12px; font-size: 13px; }
+.cm { display: flex; flex-direction: column; gap: 8px; } .cm .c { border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 8px 12px; font-size: 13px; background: var(--surface-2); }
+.cm textarea { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-ctl); padding: 8px; width: 100%; min-height: 56px; resize: vertical; }
+.ph { border-style: dashed; }
+svg text.halo { paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+svg[role=img] { display: block; max-width: 820px; margin-inline: auto; overflow: visible; } svg text { font-family: var(--font); fill: var(--ink); }
+/* movimiento: solo al entrar a una vista, luego quieto */
+.num { counter-reset: n var(--n); } .num::after { content: counter(n); }
+.anim .num { animation: count 1.1s cubic-bezier(.2,.7,.2,1) both; animation-delay: .2s; }
+.anim .rise { animation: rise .55s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 60ms); }
+.anim .grow { transform-origin: left center; animation: grow .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(.25s + var(--i, 0) * 60ms); }
+.anim .up { transform-box: fill-box; transform-origin: center bottom; animation: up .8s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(.2s + var(--i, 0) * 80ms); }
+.anim .seg-draw { animation: segd 1s cubic-bezier(.2,.7,.2,1) both; animation-delay: .2s; }
+@keyframes count { from { --n: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes up { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes segd { from { stroke-dasharray: 0 340; } }
+@media (max-width: 520px) { .huge { font-size: 48px; } .big { font-size: 36px; } .hb .r, .cmp { grid-template-columns: 1fr auto; } .hb .r .trk, .cmp .trk { grid-column: 1 / -1; order: 3; } .hero .hr { border-left: 0; border-top: 1px solid var(--line-2); border-radius: 0 0 var(--r-surf) var(--r-surf); } }
+@media (prefers-reduced-motion: reduce) { .sk, .anim .num, .anim .rise, .anim .grow, .anim .up, .anim .seg-draw { animation: none; } }
+.ktp { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.seg .kt-flag, .seg .kt-dots { margin-right: 2px; }
+
+/* «Ver como tabla» con el estandar de grilla [comentario 03-nov] */
+details.tv > summary, details.alt > summary { display: inline-flex; align-items: center; gap: 6px; }
+details.tv[open] > .tbl-wrap, details.alt[open] > .tbl { margin-top: 8px; }
+.tv .tbl-wrap, .alt .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-surf, 12px); background: var(--surface); max-height: 420px; overflow-y: auto; }
+.tv table.keep, .alt .tbl table { width: 100%; min-width: 0; border-collapse: separate; border-spacing: 0; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.tv table.keep th, .alt .tbl table th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 500; padding: 9px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tv table.keep td, .alt .tbl table td { padding: 8px 12px; border-bottom: 1px solid var(--line-2, var(--line)); white-space: nowrap; }
+.tv table.keep tbody tr:last-child td, .alt .tbl table tbody tr:last-child td { border-bottom: 0; }
+.tv table.keep tbody tr:nth-child(even) td, .alt .tbl table tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--surface-2) 45%, var(--surface)); }
+.tv table.keep tbody tr:hover td, .alt .tbl table tbody tr:hover td { background: var(--primary-soft); }
+.tv table.keep td:first-child, .alt .tbl table td:first-child { font-weight: 500; }
+.tv table.keep th:first-child, .alt .tbl table th:first-child { text-align: left; }
+
+/* omnIA embebida: IA simulada */
+.ai-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; }
+.btn.aib { display: inline-flex; align-items: center; border-radius: 999px; border: 1px solid #9be9f7; color: var(--ink, inherit); background: linear-gradient(90deg, color-mix(in srgb, #00dcfa 14%, var(--surface, #fff)), color-mix(in srgb, #0a58eb 10%, var(--surface, #fff))); padding-left: 8px; gap: 8px; font-weight: 500; cursor: pointer; }
+.btn.aib:hover { box-shadow: 0 0 0 3px rgba(0, 220, 250, .25); }
+.aiorb { width: 18px; height: 18px; border-radius: 50%; flex: none; display: inline-block; background: radial-gradient(circle at 40% 35%, #00dcfa 0, #0a58eb 38%, #001c3f 78%); }
+.as-sim { font-size: 10.5px; font-weight: 600; color: #00727f; border: 1px dashed #00b8d9; border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+[data-theme="dark"] .as-sim { color: #5fe3f5; }
+.aiask .aih { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.aiask .aiq { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.aiask .aiq .aib { white-space: normal; text-align: left; }
+</style>
+</head><body><div class="wrap" id="app"></div>
+<script>
+(function(){"use strict";
+var SEED = [
+      { id: 'p01', code: '30202004200', name: 'Act. estaciones cliente Florena', client: 'cli-01', cat: 'proyecto', multiCeco: true, state: 'activo', leader: 'Ernesto Osorio', start: '2026-07-06', end: '2026-12-18', team: ['Willian Villalobos', 'Camilo Ávila', 'Cristian Córdoba', 'Cristian Pérez', 'José Oviedo', 'Federman Tapia'], refH: 1840, quote: 'S04112', un: 'AU', pct: .55, na: ['P09'],
+        supAdds: [{ quoteId: 'S04288', name: 'Instrumentación de estaciones', value: 37400000, at: '2026-09-14' }] },
+      { id: 'p02', code: '30401007200', name: 'Contrato mtto plataforma Rockwell 2026', client: 'cli-02', cat: 'servicio', sub: 'mantenimiento', state: 'activo', leader: 'Ernesto Osorio', start: '2026-03-02', end: '2027-02-26', team: ['Brayan Castro', 'Juan Quintero', 'Néstor Mazabuel', 'Juan Menco', 'Brainer Ocampo'], refH: 960, quote: 'S03977', un: 'AU', pct: .6 },
+      { id: 'p03', code: '30029800000', name: 'Assessment infraestructura SCADA', client: 'cli-03', cat: 'proyecto', state: 'activo', leader: 'Jhon Herrera', start: '2026-08-03', end: '2026-12-11', team: ['Simón Giraldo', 'Iván Velasco', 'Miguel Quintero', 'Kevin Peña'], refH: 1120, quote: 'S04190', un: 'AU', pct: .4 },
+      { id: 'p04', code: '30301053200', name: 'Bolsa de horas de ingeniería 2026 · 40 días', client: 'cli-04', cat: 'servicio', sub: 'bolsa', state: 'activo', leader: 'Miguel Quintero', start: '2026-01-12', end: '2026-12-18', team: ['Miguel Quintero', 'Laura Posso'], refH: 600, quote: 'S03902', un: 'AU', pct: .7 },
+      { id: 'p05', code: '30027700000', name: 'BC PLC programming for Layer 3 Pasir', client: 'cli-05', group: 'Barry Callebaut · Pasir Gudang', cat: 'proyecto', multiCeco: true, state: 'activo', leader: 'Rafael de Vega', start: '2026-06-01', end: '2027-01-29', team: ['Nataly Méndez', 'Carlos Restrepo', 'Luis Lara', 'Víctor Rivera'], refH: 2480, quote: 'S04095', un: 'SM', pct: .45 },
+      { id: 'p06', code: '30014700000', name: 'Change Request 1: Pasir Gudang', client: 'cli-05', group: 'Barry Callebaut · Pasir Gudang', cat: 'proyecto', state: 'cerrado', leader: 'Rafael de Vega', start: '2025-11-03', end: '2026-05-29', team: ['Nataly Méndez'], refH: 760, quote: 'S03811', un: 'SM', pct: 1 },
+      { id: 'p07', code: '30311055800', name: 'Programación planta remoción de sulfatos', client: 'cli-06', cat: 'proyecto', state: 'activo', leader: 'Brainer Ocampo', start: '2026-09-07', end: '2027-01-22', team: ['Brainer Ocampo', 'Brayan Castro'], refH: 880, quote: 'S04233', un: 'AU', pct: .25 },
+      { id: 'p08', code: '30311054100', name: 'Contrato de mtto enero a diciembre 2026', client: 'cli-07', cat: 'servicio', sub: 'mantenimiento', state: 'activo', leader: 'Kevin Peña', start: '2026-04-06', end: '2027-03-31', team: ['Kevin Peña'], refH: 520, quote: 'S04011', un: 'AU', pct: .5 },
+      { id: 'p09', code: '30032400000', name: 'Holding continuo TA3', client: 'cli-08', cat: 'proyecto', state: 'activo', leader: 'Santiago Tobar', start: '2026-11-03', end: '2027-03-12', team: ['Santiago Tobar', 'Carlos Morales', 'Juan Gutiérrez', 'Federman Tapia'], refH: 1360, quote: 'S04297', un: 'AU', pct: .08 },
+      { id: 'p10', code: '30701006500', name: 'Anexo 194 soporte base Manizales RA 2026', client: 'cli-09', cat: 'servicio', sub: 'puntual', state: 'activo', leader: 'Juan Dueñas', start: '2026-10-05', end: '2026-12-04', team: ['Juan Dueñas', 'Diego López', 'George Moreno', 'César Bolívar', 'Carlos Rodríguez'], refH: 240, quote: 'S04340', un: 'AU', pct: .3 },
+      { id: 'p11', code: '30009400000', name: 'Toluca MES project · solid lines scope', client: 'cli-05', cat: 'proyecto', state: 'auditoria', leader: 'Natalie Ramírez', start: '2026-04-13', end: '2026-10-16', team: ['Natalie Ramírez', 'Luis Orozco', 'Kenya Sánchez'], refH: 690, quote: 'S04026', un: 'SM', pct: 1, na: ['P09', 'P17'] },
+      { id: 'p12', code: '30301044600', name: 'BC Smart Factory PM for Itabuna Brazil', client: 'cli-05', cat: 'proyecto', state: 'cerrado', leader: 'Rafael de Vega', start: '2025-09-01', end: '2026-02-27', team: ['Luis Angulo', 'Daniela Perea', 'Víctor Rivera', 'Cristian Pérez'], refH: 320, quote: 'S03760', un: 'SM', pct: 1 },
+      { id: 'p13', code: 'ANT-0003', name: 'Hoja de ruta de transformación digital', client: 'CL5', cat: 'proyecto', state: 'pendiente', leader: 'Laura Posso', start: '2026-10-19', end: '2027-01-29', team: ['Laura Posso'], refH: 288, quote: 'S04377', qid: 'q3', un: 'CO', pct: .04, early: true }
+];
+var TODAY = '2026-10-23', RATE = 95000, COSTH = 39900, TRM = 4100;
+var UMB = { util: 41, prod: 80, dOk: 5, dWarn: 15, fOk: 5, fWarn: 20, uAm: 15, pAm: 10 };
+try { var _u = JSON.parse(localStorage.getItem('kairos-analitica-umbrales') || '{}'); for (var _k in _u) if (typeof _u[_k] === 'number') UMB[_k] = _u[_k]; } catch (e) {}
+var META = UMB;
+var CLIENTS = { CL1: 'Kenvue Colombia S.A.', CL4: 'Ecopetrol S.A.', CL5: 'Alternegy S.A.', 'cli-01': 'Ecopetrol S.A.', 'cli-02': 'Celsia Colombia S.A. E.S.P.', 'cli-03': 'GeoPark Colombia S.A.S.', 'cli-04': 'Duquesa S.A.S. BIC', 'cli-05': 'Barry Callebaut', 'cli-06': 'Sucroal S.A.', 'cli-07': 'Corteva Agriscience de Colombia', 'cli-08': 'Kenvue Colombia S.A.', 'cli-09': 'Rockwell Automation Colombia' };
+var UN = { SM: 'Smart Manufacturing', AU: 'Automation', CO: 'Consultoría' };
+var STATES = { activo: 'Activo', pendiente: 'Por iniciar', auditoria: 'En auditoría documental', cerrado: 'Cerrado', cancelado: 'Cancelado' };
+var PH_TPL = { AU: ['Preparación', 'Configuración de PLC', 'Configuración de HMI', 'Protocolos y pruebas FAT', 'Comisionamiento y SAT'], SM: ['Levantamiento y diseño', 'Desarrollo de aplicación', 'Integración con planta', 'Pruebas FAT', 'Puesta en marcha y SAT'], CO: ['Diagnóstico', 'Análisis y diseño', 'Hoja de ruta', 'Socialización'] };
+var NARR = { p01: { kh: 1.3, kv: 1.35, ko: .05, kb: .78, cul: 2 }, p02: { kh: .97, kb: .97 }, p03: { kh: 1.14, kv: 1.05, ko: .01, kb: .92, cul: 1 }, p04: { kh: .85, kb: .85 }, p05: { kh: 1.06, kv: 1.2, ko: .02, kb: .98 }, p06: { kh: 1.04, kv: 1.1, ko: .03, kb: 1 }, p07: { kh: 1.22, kv: 1.4, ko: .04, kb: .85, stale: 12, cul: 1, eu: .41 }, p08: { kh: 1, kb: 1 }, p10: { kh: 1.1, kb: .9 }, p11: { kh: 1.01, kv: .95, kb: 1 }, p12: { kh: .98, kb: 1 } };
+function rnd(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } h += h << 13; h ^= h >>> 7; h += h << 3; h ^= h >>> 17; h += h << 5; return ((h >>> 0) % 100000) / 100000; }
+function day(s) { return new Date(s + 'T00:00:00Z'); }
+function iso(d) { return d.toISOString().slice(0, 10); }
+function addD(s, n) { var d = day(s); d.setUTCDate(d.getUTCDate() + n); return iso(d); }
+function diff(a, b) { return Math.round((day(b) - day(a)) / 864e5); }
+function mon(s) { var d = day(s); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return iso(d); }
+function r1(x) { return Math.round(x * 10) / 10; }
+var nf = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }), nf1 = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 });
+function N(x) { return nf.format(Math.round(x)); }
+function P(x) { return nf1.format(x) + ' %'; }
+function M(x) { var a = Math.abs(x); return (x < 0 ? '−' : '') + '$ ' + (a >= 1e6 ? nf1.format(a / 1e6) + ' M' : N(a)); }
+function COP(x) { return '$ ' + N(x); }
+function E(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+var MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+function dshort(s) { var d = day(s); return d.getUTCDate() + ' ' + MES[d.getUTCMonth()] + ' ' + String(d.getUTCFullYear()).slice(2); }
+function mlabel(k) { return MES[+k.slice(5, 7) - 1] + ' ' + k.slice(2, 4); }
+
+/* ---------- carga ---------- */
+function loadProjects() {
+  try { var raw = JSON.parse(localStorage.getItem('kairos-proyectos-v1-real') || 'null'); if (raw && raw.projects && raw.projects.length) return raw.projects; } catch (e) {}
+  return JSON.parse(JSON.stringify(SEED));
+}
+function avanceOf(p) {
+  if (p.cat === 'servicio') return null;
+  var raw = p.av, started = p.state !== 'pendiente' && p.start <= TODAY, closed = p.state === 'cerrado' || p.state === 'auditoria';
+  var cecos = raw && raw.cecos && raw.cecos.length ? raw.cecos : [{ id: 'c1', code: p.code, name: 'CECO principal' }];
+  if (!raw && p.multiCeco) cecos = cecos.concat([{ id: 'c2', code: p.code + '-02', name: 'CECO adicional · alcance ampliado' }]);
+  var phases = raw && raw.phases && raw.phases.length ? raw.phases.map(function (x) { return { id: x.id, name: x.name, w: x.w, ceco: x.ceco || 'c1', s: x.s, e: x.e }; }) : null;
+  if (!phases) {
+    var tpl = (PH_TPL[p.un] || PH_TPL.AU).concat(['Gestión del proyecto']), ws = tpl.map(function (n, i) { return .6 + rnd(p.code + 'w' + i); }), sw = ws.reduce(function (a, b) { return a + b; }, 0);
+    phases = tpl.map(function (n, i) { var s = i < tpl.length - 1 ? i / (tpl.length - 1) * .8 : 0; return { id: 'f' + (i + 1), name: n, w: r1(ws[i] / sw * 100), ceco: 'c1', s: s, e: i < tpl.length - 1 ? Math.min(1, s + .34) : 1 }; });
+  }
+  var ph = {}, pct = null, at = null, rep = raw && raw.reports && raw.reports.length ? raw.reports[raw.reports.length - 1] : null;
+  if (started) {
+    if (rep) { ph = rep.ph || {}; pct = rep.pct; at = rep.at; }
+    else if (!raw) {
+      var tgt = closed ? 100 : (p.pct || 0) * 100, acc = 0;
+      phases.forEach(function (x) { var take = Math.max(0, Math.min(100, (tgt - acc) / x.w * 100)); ph[x.id] = Math.round(take); acc += x.w * ph[x.id] / 100; });
+      pct = r1(acc); at = closed ? p.end : addD(TODAY, -(1 + Math.floor(rnd(p.code + 'at') * 7)));
+    }
+  }
+  var nar = NARR[p.id] || {};
+  if (nar.stale && at) at = addD(TODAY, -nar.stale);
+  return { cecos: cecos, phases: phases, ph: ph, pct: pct, at: at, closed: closed };
+}
+
+/* ---------- simulacion ---------- */
+var SIM = {};
+/* [ACORDADO 30-oct] utilidad esperada = (valor cotizado - costo presupuestado) / valor, al cerrar la cotizacion ganada. Simulada hasta conectar Cotizaciones. */
+function expU(p) { if (typeof p.expUtil === 'number') return p.expUtil; var n = NARR[p.id] || {}; return n.eu != null ? n.eu : Math.round(360 + rnd(p.code + 'eu') * 80) / 1000; }
+function simulate(p) {
+  var nar = NARR[p.id] || {}, av = avanceOf(p), F = p.refH * RATE, eu = expU(p), started = p.state !== 'pendiente' && p.start <= TODAY && p.state !== 'cancelado';
+  var closed = p.state === 'cerrado' || p.state === 'auditoria', tEl = closed ? 1 : Math.max(0, Math.min(1, diff(p.start, TODAY) / Math.max(1, diff(p.start, p.end))));
+  var plan = !started ? 0 : closed ? 1 : (av && av.pct != null ? av.pct / 100 : tEl);
+  var kh = nar.kh || (.92 + rnd(p.code + 'kh') * .2), kv = nar.kv || (.9 + rnd(p.code + 'kv') * .25), ko = nar.ko != null ? nar.ko : rnd(p.code + 'ko') * .012, kb = nar.kb || (.88 + rnd(p.code + 'kb') * .14);
+  var cecos = av ? av.cecos : [{ id: 'c1', code: p.code, name: p.cat === 'servicio' ? 'CECO del servicio' : 'CECO principal' }];
+  var s = { p: p, av: av, plan: plan, started: started, closed: closed, cecos: cecos, hours: [], costs: [], inv: [],
+    q: { h: p.refH, f: F, c: { 'Ingeniería': .42 / .59 * (1 - eu) * F, 'Viáticos': .17 / .59 * (1 - eu) * F, 'Otros': 0 } } };
+  s.q.cTot = (1 - eu) * F; s.eu = eu;
+  if (!started) return s;
+  var end = closed ? p.end : (p.end < TODAY ? p.end : TODAY), W = [];
+  for (var w = mon(p.start); w <= end; w = addD(w, 7)) W.push(w);
+  var wts = W.map(function (w, i) { return .6 + rnd(p.code + 'wk' + i); }), swt = wts.reduce(function (a, b) { return a + b; }, 0), H = p.refH * plan * kh;
+  var team = p.team && p.team.length ? p.team : [p.leader], tw = team.map(function (n, i) { return (i === 0 ? 1.6 : .6) + rnd(p.code + 'tm' + i); }), stw = tw.reduce(function (a, b) { return a + b; }, 0);
+  var PERF = ['Ingeniero senior', 'Ingeniero', 'Analista'];
+  var perfil = {}; team.forEach(function (n, i) { perfil[n] = PERF[i === 0 ? 0 : 1 + Math.floor(rnd(p.code + 'pf' + i) * 2)]; });
+  s.perfil = perfil;
+  var phs = av ? av.phases : null, cul = nar.cul != null ? nar.cul : -1;
+  W.forEach(function (w, i) {
+    var hw = H * wts[i] / swt, t = (i + .5) / W.length;
+    team.forEach(function (m, j) {
+      var h = Math.round(hw * tw[j] / stw * 2) / 2; if (h <= 0) return;
+      var phase = null, cid = 'c1';
+      if (phs) {
+        var pw = phs.map(function (x, k) { var ov = Math.max(0, Math.min(x.e, t + .15) - Math.max(x.s, t - .15)); return ov * (k === cul ? 1.9 : /^Gesti/.test(x.name) ? .3 : 1) + .01; }), tot = pw.reduce(function (a, b) { return a + b; }, 0), r = rnd(p.code + w + m) * tot, k = 0;
+        while (k < pw.length - 1 && r > pw[k]) { r -= pw[k]; k++; }
+        phase = phs[k]; cid = phase.ceco;
+      } else if (cecos.length > 1 && rnd(p.code + w + m + 'c') < .25) cid = cecos[1].id;
+      s.hours.push({ d: addD(w, Math.floor(rnd(p.code + w + m + 'd') * 5)), person: m, perfil: perfil[m], phase: phase ? phase.name : null, phaseId: phase ? phase.id : null, ceco: cid, h: h });
+    });
+  });
+  s.hours = s.hours.filter(function (r) { return r.d <= TODAY; });
+  var hrs = {}; s.hours.forEach(function (r) { var k = r.d.slice(0, 7) + '|' + r.ceco; hrs[k] = (hrs[k] || 0) + r.h; });
+  Object.keys(hrs).sort().forEach(function (k) { var m = k.split('|'); s.costs.push({ d: m[0] + '-' + (m[0] === TODAY.slice(0, 7) ? '22' : '28'), cat: 'Ingeniería', sub: 'Horas de ingeniería', v: Math.round(hrs[k] * COSTH * (.97 + rnd(p.code + k) * .06) / 1000) * 1000, ceco: m[1], note: N(hrs[k]) + ' h del mes' }); });
+  var months = []; W.forEach(function (w) { var m = w.slice(0, 7); if (months.indexOf(m) < 0) months.push(m); });
+  var vTot = s.q.c['Viáticos'] * plan * kv, SUBV = ['Tiquetes aéreos', 'Hospedaje', 'Alimentación y transporte local'];
+  months.forEach(function (m, i) { var share = vTot / months.length * (.7 + rnd(p.code + 'v' + m) * .6); if (share > 20000) s.costs.push({ d: m + '-' + (m === TODAY.slice(0, 7) ? '20' : '15'), cat: 'Viáticos', sub: SUBV[i % 3], v: Math.round(share / 1000) * 1000, ceco: 'c1', note: p.cat === 'servicio' ? 'Visita a planta' : 'Desplazamiento a sitio' }); });
+  var oTot = ko * F * plan, SUBO = ['Subcontrato especializado', 'Compras menores', 'Calibración externa'];
+  if (oTot > 100000) [0, 1, 2].forEach(function (k) { var m = months[Math.min(months.length - 1, Math.floor(rnd(p.code + 'o' + k) * months.length))]; s.costs.push({ d: m + '-10', cat: 'Otros', sub: SUBO[k], v: Math.round(oTot * (k === 0 ? .5 : .25) / 1000) * 1000, ceco: 'c1', note: 'No incluido en la cotización' }); });
+  s.costs.sort(function (a, b) { return a.d < b.d ? -1 : 1; });
+  var fTot = F * plan * kb, n = Math.max(1, Math.min(6, Math.round(months.length / 1.5))), c2ok = cecos.length < 2 || plan > .6;
+  for (var i = 0; i < n; i++) {
+    var dd = addD(p.start, Math.round(diff(p.start, closed ? p.end : TODAY) * (i + 1) / n)); if (dd > TODAY) dd = addD(TODAY, -2);
+    var age = diff(dd, TODAY), est = closed || age > 45 ? 'Pagada' : (p.id === 'p01' && i === n - 2 ? 'Vencida' : 'Emitida');
+    var cat = i === n - 1 && kv > 1.1 ? 'Viáticos' : 'Ingeniería', v = Math.round(fTot / n / 1000) * 1000 ;
+    s.inv.push({ no: 'FE-' + (4100 + Math.floor(rnd(p.code + 'in' + i) * 800)), est: est, cop: v, usd: Math.round(v / TRM), cat: cat, d: dd, paid: est === 'Pagada' ? addD(dd, 28) : null, note: cat === 'Viáticos' ? 'Reembolso de viáticos' : 'Hito ' + (i + 1) + ' de ' + n, ceco: 'c1' });
+  }
+  if (cecos.length > 1 && c2ok) s.inv.push({ no: 'FE-' + (4900 + Math.floor(rnd(p.code + 'c2') * 90)), est: 'Emitida', cop: Math.round(fTot * .12 / 1000) * 1000, usd: Math.round(fTot * .12 / TRM), cat: 'Ingeniería', d: addD(TODAY, -9), paid: null, note: 'Alcance adicional', ceco: cecos[1].id });
+  if (cecos.length > 1 && !c2ok) s.sinFactCeco = cecos[1].code;
+  return s;
+}
+function sim(id) { return SIM[id]; }
+/* ---------- metricas ---------- */
+function sum(a, f) { var t = 0; a.forEach(function (x) { t += f(x); }); return t; }
+function inR(d, rg) { return !rg || (d >= rg[0] && d <= rg[1]); }
+function metrics(list, rg) {
+  var m = { list: list }, W = sum(list, function (s) { return s.p.refH; });
+  m.hQ = W; m.hE = sum(list, function (s) { return sum(s.hours.filter(function (r) { return inR(r.d, rg); }), function (r) { return r.h; }); });
+  m.cQ = sum(list, function (s) { return s.q.cTot; }); m.fQ = sum(list, function (s) { return s.q.f; });
+  m.cE = sum(list, function (s) { return sum(s.costs.filter(function (r) { return inR(r.d, rg); }), function (r) { return r.v; }); });
+  m.fE = sum(list, function (s) { return sum(s.inv.filter(function (r) { return inR(r.d, rg); }), function (r) { return r.cop; }); });
+  m.plan = W ? sum(list, function (s) { return s.p.refH * s.plan; }) / W : 0;
+  var pr = list.filter(function (s) { return s.av && s.av.pct != null; }), wp = sum(pr, function (s) { return s.p.refH; });
+  m.avance = wp ? sum(pr, function (s) { return s.p.refH * s.av.pct; }) / wp : null;
+  m.hasProy = list.some(function (s) { return s.p.cat === 'proyecto'; });
+  m.sinAvance = m.hasProy && list.some(function (s) { return s.av && s.av.pct == null && s.started; });
+  m.uExp = m.fQ ? (m.fQ - m.cQ) / m.fQ * 100 : META.util;
+  m.noData = m.hE === 0 && m.fE === 0 && m.cE === 0;
+  m.cat = {}; ['Ingeniería', 'Viáticos', 'Otros'].forEach(function (c) { m.cat[c] = { q: sum(list, function (s) { return s.q.c[c]; }), e: sum(list, function (s) { return sum(s.costs.filter(function (r) { return r.cat === c && inR(r.d, rg); }), function (r) { return r.v; }); }) }; });
+  return m;
+}
+var LBL = { util: 'Utilidad', prod: 'Productividad', horas: 'Horas', costo: 'Costo', fact: 'Facturación' };
+function stOf(k, dev, val, ex) {
+  if (k === 'horas' || k === 'costo') return dev <= UMB.dOk ? 'ok' : dev <= UMB.dWarn ? 'warn' : 'err';
+  if (k === 'fact') return dev >= -UMB.fOk ? 'ok' : dev >= -UMB.fWarn ? 'warn' : 'err';
+  if (k === 'util') { var t = ex != null ? ex : META.util; return val >= t ? 'ok' : val >= t - UMB.uAm ? 'warn' : 'err'; }
+  return val >= META.prod ? 'ok' : val >= META.prod - UMB.pAm ? 'warn' : 'err';
+}
+function kpis(m) {
+  var out = {}, none = { st: 'off', disp: '—', dev: 'Sin datos todavía', causa: '', val: null };
+  var exp = m.plan * 100, simK = { costo: 1, fact: 1, util: 1 };
+  if (m.noData) { Object.keys(LBL).forEach(function (k) { out[k] = { k: k, label: LBL[k], st: 'off', disp: '—', dev: 'Sin datos todavía', causa: '', val: null, sim: !!simK[k] }; }); return out; }
+  var hv = m.hE / m.hQ * 100, cv = m.cQ ? m.cE / m.cQ * 100 : 0, fv = m.fE / m.fQ * 100, uv = m.fE > 0 ? (m.fE - m.cE) / m.fE * 100 : null, pv = m.hE > 0 ? m.hQ * m.plan / m.hE * 100 : null;
+  var hd = hv - exp, cd = cv - exp, fd = fv - exp;
+  out.horas = { k: 'horas', label: 'Horas', val: hv, disp: P(hv), dev: (hd > 0 ? '+' : '') + nf1.format(hd) + ' pp vs esperado ' + P(exp), st: stOf('horas', hd), meta: 'Meta ≤ ' + P(exp) + ' al día de hoy', causa: causaHoras(m, hd) };
+  out.costo = { k: 'costo', label: 'Costo', val: cv, disp: P(cv), dev: (cd > 0 ? '+' : '') + nf1.format(cd) + ' pp vs esperado ' + P(exp), st: stOf('costo', cd), meta: 'Meta ≤ ' + P(exp) + ' al día de hoy', causa: causaCosto(m, cd), sim: 1 };
+  out.fact = { k: 'fact', label: 'Facturación', val: fv, disp: P(fv), dev: (fd > 0 ? '+' : '') + nf1.format(fd) + ' pp vs esperado ' + P(exp), st: stOf('fact', fd), meta: 'Meta ≥ ' + P(exp) + ' al día de hoy', causa: causaFact(m, fd), sim: 1 };
+  out.util = uv == null ? { k: 'util', label: 'Utilidad', val: null, disp: '—', st: 'off', dev: 'Aún no hay facturación', causa: '', sim: 1 } : { k: 'util', label: 'Utilidad', val: uv, disp: P(uv), dev: (uv - m.uExp >= 0 ? '+' : '') + nf1.format(uv - m.uExp) + ' pp vs esperada ' + P(m.uExp), st: stOf('util', 0, uv, m.uExp), meta: 'Esperada ' + P(m.uExp), causa: causaUtil(m, uv), sim: 1 };
+  out.prod = pv == null ? { k: 'prod', label: 'Productividad', val: null, disp: '—', st: 'off', dev: 'Aún no hay horas', causa: '' } : { k: 'prod', label: 'Productividad', val: pv, disp: P(pv), dev: (pv - META.prod >= 0 ? '+' : '') + nf1.format(pv - META.prod) + ' pp vs meta ' + META.prod + ' %', st: stOf('prod', 0, pv), meta: 'Meta ' + META.prod + ' %', causa: pv >= META.prod ? 'Horas acordes con el avance logrado' : 'Por cada 100 h de avance se usaron ' + N(100 / pv * 100) + ' h' };
+  return out;
+}
+function phaseRows(m) {
+  var rows = [];
+  m.list.forEach(function (s) { if (!s.av) return; s.av.phases.forEach(function (ph) {
+    var q = s.p.refH * ph.w / 100, e = sum(s.hours.filter(function (r) { return r.phaseId === ph.id; }), function (r) { return r.h; }), pc = s.av.ph[ph.id] || 0;
+    var ex0 = /^Gesti/.test(ph.name) ? q * s.plan : q * pc / 100;
+    rows.push({ name: (m.list.length > 1 ? s.p.code.slice(-5) + ' · ' : '') + ph.name, q: q, e: e, pc: pc, exp: ex0, ex: e - ex0, pid: s.p.id });
+  }); });
+  return rows;
+}
+function causaHoras(m, d) {
+  if (d <= UMB.dOk) return 'En línea con el avance';
+  var rows = phaseRows(m).filter(function (r) { return r.ex > 0; }), tot = sum(rows, function (r) { return r.ex; });
+  if (rows.length) { rows.sort(function (a, b) { return b.ex - a.ex; }); return rows[0].name + ' lleva +' + N(rows[0].ex) + ' h sobre lo esperado (' + Math.round(rows[0].ex / tot * 100) + ' % del exceso)'; }
+  var by = {}; m.list.forEach(function (s) { s.hours.forEach(function (r) { by[r.person] = (by[r.person] || 0) + r.h; }); });
+  var k = Object.keys(by).sort(function (a, b) { return by[b] - by[a]; })[0];
+  return k ? k + ' concentra el ' + Math.round(by[k] / m.hE * 100) + ' % de las horas' : '';
+}
+function causaCosto(m, d) {
+  if (d <= UMB.dOk) return 'Dentro de lo cotizado';
+  var ex = {}, tot = 0; Object.keys(m.cat).forEach(function (c) { ex[c] = m.cat[c].e - m.cat[c].q * m.plan; if (ex[c] > 0) tot += ex[c]; });
+  var k = Object.keys(ex).sort(function (a, b) { return ex[b] - ex[a]; })[0];
+  return k && tot > 0 ? Math.round(ex[k] / tot * 100) + ' % del sobrecosto está en ' + k + ' (' + M(ex[k]) + ')' + (m.cat[k].q === 0 ? ' · no estaba cotizado' : '') : '';
+}
+function causaFact(m, d) {
+  if (d >= -UMB.fOk) return 'Facturación al ritmo del avance';
+  var gap = m.fQ * m.plan - m.fE, venc = sum(m.list, function (s) { return s.inv.filter(function (i) { return i.est === 'Vencida'; }).length; });
+  return 'Faltan ' + M(gap) + ' por facturar frente al avance' + (venc ? ' · ' + venc + ' factura vencida' : '');
+}
+function causaUtil(m, u) {
+  if (u >= m.uExp) return 'Utilidad igual o mayor a la esperada';
+  var cl = m.cE / (m.cQ * m.plan || 1), bl = m.fE / (m.fQ * m.plan || 1);
+  if (cl - 1 >= 1 - bl) { var t = causaCosto(m, 99); return 'Sobrecosto de ' + nf1.format((cl - 1) * 100) + ' % sobre lo esperado' + (t ? ': ' + t.charAt(0).toLowerCase() + t.slice(1) : ''); }
+  return 'Facturación ' + nf1.format((1 - bl) * 100) + ' % por debajo de lo esperado';
+}
+function worst(K) { var sc = { err: 3, warn: 2, ok: 1, off: 0 }, w = 'off'; Object.keys(K).forEach(function (k) { if (sc[K[k].st] > sc[w]) w = K[k].st; }); return w; }
+function risk(m, K) {
+  var s = 0; Object.keys(K).forEach(function (k) { s += K[k].st === 'err' ? 2 : K[k].st === 'warn' ? 1 : 0; });
+  m.list.forEach(function (x) { if (x.av && x.av.at && diff(x.av.at, TODAY) > 7 && !x.closed) s += 1; });
+  return s;
+}
+function avDesvio(m) { if (m.avance == null || !m.hQ || m.hE === 0) return null; return Math.max(m.hE / m.hQ * 100, m.cQ ? m.cE / m.cQ * 100 : 0) - m.avance; }
+
+/* ---------- unidades ---------- */
+function buildUnits(projs) {
+  var g = {}, units = [];
+  projs.forEach(function (p) { if (p.state === 'cancelado') return; if (p.group) (g[p.group] = g[p.group] || []).push(p); });
+  var done = {};
+  projs.forEach(function (p) {
+    if (p.state === 'cancelado') return;
+    if (p.group && g[p.group].length > 1) {
+      if (done[p.group]) return; done[p.group] = 1;
+      var kids = g[p.group].map(function (q) { return unit(q); });
+      units.push({ id: 'g-' + p.group.replace(/[^a-z0-9]/gi, '').toLowerCase(), kind: 'sombrilla', name: p.group, client: p.client, leader: p.leader, sims: kids.map(function (k) { return k.sims[0]; }), kids: kids, un: p.un });
+    } else units.push(unit(p));
+  });
+  return units;
+}
+function unit(p) { return { id: p.id, kind: p.cat, name: p.name, client: p.client, leader: p.leader, sims: [SIM[p.id]], kids: null, un: p.un, state: p.state, p: p }; }
+function ustate(u) { if (u.kind !== 'sombrilla') return u.state; var st = u.kids.map(function (k) { return k.state; }); return st.indexOf('activo') >= 0 ? 'activo' : st.indexOf('auditoria') >= 0 ? 'auditoria' : st.indexOf('pendiente') >= 0 ? 'pendiente' : 'cerrado'; }
+function findUnit(units, id) { var r = null; units.forEach(function (u) { if (u.id === id) r = u; if (u.kids) u.kids.forEach(function (k) { if (k.id === id) r = k; }); }); return r; }
+/* ---------- estado, roles y utilidades de vista ---------- */
+var $app = document.getElementById('app'), SH = window.KAIROS_SHELL || null;
+var EMB = /^#embed-/.test(location.hash), ROLE = (SH && SH.role) || 'direccion', UNAME = (function () { var u = SH && SH.user; return typeof u === 'string' ? u : (u && (u.name || u.nombre)) || ''; })();
+/* [ACORDADO 30-oct] Maestro 7.1: quien ve cada reporte. El lider solo ve lo suyo. */
+var ACC = { regionales: ['direccion', 'admin', 'planeacion', 'lider', 'pm'], general: ['direccion', 'admin', 'planeacion'], cartera: ['direccion', 'admin', 'planeacion', 'lider', 'pm'], ocupacion: ['planeacion'], negocio: ['sd', 'direccion', 'admin', 'lider', 'pm'], forecast: ['direccion', 'planeacion', 'lider', 'admin'], rentcot: ['direccion', 'sd', 'lider', 'admin'] };
+var CAN_ALL = ['planeacion', 'direccion', 'admin'], OWN = ['pm', 'lider'];
+var VIEWS = [['general', 'General'], ['cartera', 'Proyectos y Servicios'], ['regionales', 'Por regional'], ['ocupacion', 'Ocupación'], ['negocio', 'Análisis de Negocio'], ['forecast', 'Forecast y Backlog'], ['rentcot', 'Rentabilidad de cotizaciones']];
+function can(v) { return !!ACC[v] && ACC[v].indexOf(ROLE) >= 0; }
+function home() { if (ROLE === 'planeacion') return 'ocupacion'; if (ROLE === 'sd') return 'negocio'; for (var i = 0; i < VIEWS.length; i++) if (can(VIEWS[i][0])) return VIEWS[i][0]; return null; }
+function isMine(u) { return u.leader === UNAME || !!(u.kids && u.kids.some(function (k) { return k.leader === UNAME; })); }
+function canDetail(u) { return can('cartera') && (OWN.indexOf(ROLE) < 0 || isMine(u)); }
+function canNeg(u) { return can('negocio') && (OWN.indexOf(ROLE) < 0 || isMine(u)); }
+var S = { tipo: 'todos', units: [], view: 'general', id: null, kpi: null, mine: null, fEst: 'activo', fCli: '', fUn: '', child: 'todos', per: { mode: 'todo', y: 2026, m: 10, w: 0 }, cum: false, open: {}, cut: {}, more: {}, loading: true, errOdoo: false, ncut: 'un', occ: null };
+var ICO = { chev: 'M6 9l6 6 6-6', back: 'M15 18l-6-6 6-6', fwd: 'M9 18l6-6-6-6', arrow: 'M5 12h14M13 6l6 6-6 6', warn: 'M12 3l10 18H2zM12 10v5M12 18h.01', info: 'M12 8h.01M11 12h1v5h1M12 22a10 10 0 100-20 10 10 0 000 20z' };
+function ic(n) { return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="' + ICO[n] + '"/></svg>'; }
+function simTag(t) { return '<span class="sim" title="Dato simulado hasta conectar la fuente real">' + (t || 'Odoo') + ' · simulado</span>'; }
+var CACHE = {};
+function calc(u) { if (!CACHE[u.id]) { var m = metrics(u.sims), K = kpis(m); CACHE[u.id] = { m: m, K: K, w: worst(K), r: risk(m, K) }; } return CACHE[u.id]; }
+function myUnits() { var us = S.units; if (S.mine || OWN.indexOf(ROLE) >= 0) us = us.filter(isMine); return us; }
+function passEst(u) { var st = ustate(u); return S.fEst === 'todos' || (S.fEst === 'activo' && (st === 'activo' || st === 'pendiente')) || (S.fEst === 'cerrado' && st === 'cerrado') || (S.fEst === 'auditoria' && st === 'auditoria'); }
+function passTipo(u) { return S.tipo === 'todos' || (S.tipo === 'servicio' ? u.kind === 'servicio' : u.kind !== 'servicio'); }
+function cliName(c) { return CLIENTS[c] || c; }
+/* iconos de tipo de CECO y limpiar filtros compartidos [ACORDADO 01-nov] */
+var KT = null; try { KT = window.parent !== window ? window.parent.KairosTipos : window.KairosTipos; if (KT) KT.inject(document); } catch (e) { }
+function ktTile(u, size) { if (!KT) return ''; if (u.kind === 'sombrilla') return '<span style="width:' + (size === 'sm' ? 24 : 30) + 'px;flex:none" aria-hidden="true"></span>'; return (u.p && u.p.code ? KT.tileCode(u.p.code, size, u.kind) : '') || KT.tile(u.kind, u.p && u.p.sub, size); }
+function tipoPill(u) { if (KT && u.kind !== 'sombrilla') return '<span class="ktp">' + ktTile(u, 'sm') + '<span>' + E(KT.label(u.kind, u.p && u.p.sub)) + '</span></span>'; return u.kind === 'sombrilla' ? '<span class="pill pri">Sombrilla · ' + u.kids.length + ' proyectos</span>' : u.kind === 'servicio' ? '<span class="pill off">Servicio</span>' : '<span class="pill pri">Proyecto</span>'; }
+function estPill(u) { var st = ustate(u); return '<span class="pill ' + (st === 'activo' ? 'ok' : st === 'pendiente' ? 'warn' : 'off') + '">' + STATES[st] + '</span>'; }
+function selOpts(list, cur) { return list.map(function (o) { return '<option value="' + E(o[0]) + '"' + (o[0] === cur ? ' selected' : '') + '>' + E(o[1]) + '</option>'; }).join(''); }
+var STC = { ok: 'var(--ok)', warn: 'var(--warn)', err: 'var(--err)', off: 'var(--off-ink)' };
+var STL = { err: 'En riesgo', warn: 'En atención', ok: 'Al día', off: 'Sin datos' };
+var UNC = { AU: 'var(--primary)', SM: 'var(--bright)', CO: 'var(--p-E1)' };
+function headHTML(title, sub, side) { return '<div class="head"><div><h1>' + title + '</h1>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + (side || '') + '</div>'; }
+function navTabs(act) {
+  var T = VIEWS.filter(function (v) { return can(v[0]); }); if (T.length < 1) return '';
+  /* Forecast y Backlog: la pestana muestra los Tableros del forecast dentro de Analitica [ACORDADO 03-nov] */
+  var fc = '';
+  return '<nav class="tabs" role="tablist" aria-label="Reportes de Analítica">' + T.map(function (t) { return '<button role="tab" aria-selected="' + (t[0] === act) + '" data-go="' + t[0] + '">' + t[1] + '</button>'; }).join('') + fc + '</nav>';
+}
+function tipoSeg() { return '<div class="seg" role="group" aria-label="Tipo">' + [['todos', 'Proyectos y servicios', ''], ['proyecto', 'Solo proyectos', KT ? KT.flag() + ' ' : ''], ['servicio', 'Solo servicios', KT ? KT.dots() + ' ' : '']].map(function (o) { return '<button data-tipo="' + o[0] + '" aria-pressed="' + (S.tipo === o[0]) + '">' + o[2] + o[1] + '</button>'; }).join('') + '</div>'; }
+/* barra de utilidad: escala 0 a 60 %, marca en la utilidad esperada */
+function ubar(v, ex, st, h, i) { var w = v == null ? 0 : Math.max(1, Math.min(100, v / 60 * 100)); return '<span class="ub" style="height:' + (h || 6) + 'px"><i class="grow" style="--i:' + (i || 0) + ';width:' + w + '%;background:' + STC[st || 'off'] + '"></i><u style="left:' + Math.min(100, ex / 60 * 100) + '%"></u></span>'; }
+function stateBox(t, p) { return '<div class="card state"><h3>' + t + '</h3><p>' + p + '</p></div>'; }
+function footSim(t) { return '<p class="sm muted row">' + simTag() + '<span>' + (t || 'Horas y avance salen de Kairos. Mientras llega el API de Odoo, costos y facturación son simulados.') + '</span></p>'; }
+var GEST = [['activo', 'Activos', 'var(--ok)'], ['pendiente', 'Por iniciar', 'var(--warn)'], ['auditoria', 'En auditoría documental', 'var(--bright)'], ['cerrado', 'Cerrados', 'var(--off-ink)']];
+function leaves(u) { return u.kids ? u.kids : [u]; }
+function whyText(c) {
+  var order = ['util', 'costo', 'horas', 'fact', 'prod'], out = [];
+  if (c.m.noData) return 'Sin datos todavía: aún no hay horas registradas.';
+  order.forEach(function (k) { var x = c.K[k]; if ((x.st === 'err' || x.st === 'warn') && x.causa && out.length < 2 && !out.some(function (o) { return o.indexOf(x.causa) >= 0; })) out.push(x.causa); });
+  var stale = c.m.list.filter(function (s) { return s.av && s.av.at && !s.closed && diff(s.av.at, TODAY) > 7; });
+  if (stale.length) out.push('El avance lleva ' + diff(stale[0].av.at, TODAY) + ' días sin actualizarse');
+  return out.length ? out.join('. ') + '.' : 'Todo en rango.';
+}
+
+
+/* ---------- omnIA en Analitica: IA simulada [PROPUESTA 16-nov] ---------- */
+
+function OMN() { try { var w = window.parent; for (var i = 0; i < 3 && w; i++) { if (w.Omnia && w.Omnia.assist) return w.Omnia; if (w === w.parent) break; w = w.parent; } } catch (e) { } return null; }
+function omOk() { var o = OMN(); try { return !!(o && o.ready()); } catch (e) { return false; } }
+function nrm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+function cut1(s, n) { n = n || 110; s = String(s || '').replace(/\s+/g, ' ').trim(); var m = /^(.+?\.)\s/.exec(s + ' '); if (m && m[1].length > 25) s = m[1]; return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+function aiBar(btns) { if (!omOk()) return ''; return '<div class="ai-bar">' + btns.map(function (b) { return '<button class="btn aib sm" data-ai="' + b[0] + '"' + (b[2] ? ' data-v="' + b[2] + '"' : '') + '><span class="aiorb"></span>' + b[1] + '</button>'; }).join('') + '<span class="as-sim" title="En producción responde el modelo de IA. Aquí es simulado.">IA · simulada</span>' + '</div>'; }
+var omWait = 0; function omWhenReady() { if (omWait || omOk() || !OMN()) return; var n = 0; omWait = setInterval(function () { if (omOk() || ++n > 30) { clearInterval(omWait); if (omOk()) render(); } }, 400); }
+function copyTxt(t) { try { navigator.clipboard.writeText(t); } catch (e) { } }
+
+var AQ = [['riesgo', '¿Cuáles están en mayor riesgo y por qué?'], ['avance', '¿Qué avance lleva más de 7 días sin actualizar?'], ['unidad', '¿Cómo va la utilidad por unidad de negocio?']];
+function askBar() {
+  if (!omOk() || EMB) return '';
+  return '<section class="card aiask"><div class="aih"><span class="aiorb"></span><b>Pregúntale a omnIA</b>' + '<span class="as-sim" title="En producción responde el modelo de IA. Aquí es simulado.">IA · simulada</span>' + '</div><div class="aiq">' + AQ.map(function (q) { return '<button class="btn aib sm" data-aiq="' + q[0] + '">' + q[1] + '</button>'; }).join('') + '</div></section>';
+}
+function actUnits() { return S.units.filter(passTipo).filter(function (u) { return ustate(u) === 'activo'; }); }
+function aiAsk(k, ret) {
+  var o = OMN(); if (!o) return;
+  var act = actUnits(), F = [], q = AQ.filter(function (x) { return x[0] === k; })[0], intro = '';
+  if (k === 'riesgo') {
+    var L = act.filter(function (u) { var c = calc(u); return c.w === 'err' || c.w === 'warn'; }).sort(function (a, b) { return calc(b).r - calc(a).r; }).slice(0, 3);
+    intro = 'Ordené los ' + act.length + ' activos por riesgo y leí sus indicadores:';
+    L.forEach(function (u) { var c = calc(u); F.push({ k: c.w === 'err' ? 'w' : 'n', src: 'rg', html: '<b>' + E(u.name) + '</b> · ' + E(cliName(u.client)) + (u.leader ? ', ' + E(u.leader) : '') + '. ' + E(whyText(c)), link: canDetail(u) ? { label: 'Abrir', act: 'go:u:' + u.id } : null }); });
+    if (!L.length) F.push({ k: 'k', src: 'rg', html: '<b>Ningún activo en riesgo o en atención.</b>' });
+  } else if (k === 'avance') {
+    var st = [];
+    act.forEach(function (u) { calc(u).m.list.forEach(function (s) { if (s.av && s.av.at && !s.closed && diff(s.av.at, TODAY) > 7) st.push({ u: u, d: diff(s.av.at, TODAY) }); }); });
+    var seen = {}; st = st.sort(function (a, b) { return b.d - a.d; }).filter(function (x) { if (seen[x.u.id]) return false; seen[x.u.id] = 1; return true; });
+    intro = 'Revisé la fecha del último reporte de avance de los ' + act.length + ' activos:';
+    st.slice(0, 5).forEach(function (x) { F.push({ k: x.d > 14 ? 'w' : 'n', src: 'rg', html: '<b>' + E(x.u.name) + '</b> · ' + x.d + ' días sin actualizar' + (x.u.leader ? ' · líder ' + E(x.u.leader) : '') + '.', link: canDetail(x.u) ? { label: 'Abrir', act: 'go:u:' + x.u.id } : null }); });
+    if (st.length > 5) F.push({ k: 'n', src: 'rg', html: '<b>Y ' + (st.length - 5) + ' más.</b>' });
+    if (!st.length) F.push({ k: 'k', src: 'rg', html: '<b>Todo el avance está al día.</b> Ningún activo pasa de 7 días.' });
+  } else {
+    var by = {}; act.forEach(function (u) { (by[u.un || '—'] = by[u.un || '—'] || []).push(u); });
+    intro = 'Agrupé los activos por unidad y comparé la utilidad con la esperada:';
+    Object.keys(by).sort().forEach(function (un) {
+      var L = by[un], v = [], ex = [], risk = 0;
+      L.forEach(function (u) { var c = calc(u); if (c.K.util && typeof c.K.util.val === 'number' && !c.m.noData) { v.push(c.K.util.val); ex.push(c.m.uExp); } if (c.w === 'err') risk++; });
+      if (!v.length) { F.push({ k: 'n', src: 'rg', html: '<b>' + E(UN[un] || un) + '</b> · sin datos de utilidad todavía.' }); return; }
+      var av = v.reduce(function (s, x) { return s + x; }, 0) / v.length, ae = ex.reduce(function (s, x) { return s + x; }, 0) / ex.length;
+      F.push({ k: av < ae - 3 ? 'w' : av < ae ? 'n' : 'k', src: 'rg', html: '<b>' + E(UN[un] || un) + '</b> · utilidad promedio ' + P(av) + ' frente a ' + P(ae) + ' esperada · ' + risk + ' de ' + L.length + ' en riesgo.' });
+    });
+  }
+  F.sort(function (a, b) { return 'wnk'.indexOf(a.k) - 'wnk'.indexOf(b.k); });
+  var A = { action: q[1], origin: 'Analítica', intro: intro,
+    card: { title: q[1], findings: F, foot: 'omnIA entiende la pregunta; las cifras son las de Analítica', buttons: [{ label: 'Listo', act: 'dismiss', primary: true }] },
+    onAction: function (act) { if (/^go:u:/.test(act)) { S.child = 'todos'; navigate(act.slice(5)); window.scrollTo(0, 0); } return null; } };
+  if (ret) return A; o.assist(A);
+}
+document.addEventListener('click', function (e) { var t = e.target.closest('[data-aiq]'); if (t) aiAsk(t.dataset.aiq); });
+var omSetA = false;
+function omSyncA() {
+  omWhenReady(); var o = OMN(); if (!o || !o.setRecord || EMB || omSetA) return; omSetA = true;
+  try { o.setRecord('analisis', { id: 'general', label: 'Analítica · foto al ' + dshort(TODAY), short: 'Analítica' }); } catch (e) { }
+  try { if (o.onAsk) o.onAsk('analisis', function (low) {
+    if (/riesgo|peor|atencion/.test(low)) return aiAsk('riesgo', true);
+    if (/avance|actualiz|reporte/.test(low)) return aiAsk('avance', true);
+    if (/utilidad|unidad|margen/.test(low)) return aiAsk('unidad', true);
+    return null;
+  }, AQ.map(function (x) { return x[1]; })); } catch (e) { }
+}
+var _rndAI = render; render = function () { var r = _rndAI.apply(this, arguments); omSyncA(); return r; };
+
+/* ---------- General ---------- */
+function generalView() {
+  var us = S.units.filter(passTipo), h = headHTML('Analítica', 'Toda la compañía, foto al ' + dshort(TODAY), tipoSeg()) + navTabs('general') + askBar();
+  if (!us.length) return h + stateBox('Sin datos para este filtro', 'Cambia el tipo para ver otros proyectos o servicios.');
+  var cnt = {}; GEST.forEach(function (g) { cnt[g[0]] = 0; }); us.forEach(function (u) { cnt[ustate(u)]++; });
+  h += '<section class="card"><div class="cardh"><h3>Estado del portafolio</h3><span class="sp"></span><span class="sm muted">' + us.length + ' registros en total' + (us.some(function (u) { return u.kind === 'sombrilla'; }) ? ' · cada sombrilla cuenta como uno' : '') + '</span></div><div class="cnts">' + GEST.map(function (g, i) { return '<div class="cnt rise" style="--i:' + i + '"><span class="big num" style="--n:' + cnt[g[0]] + '"></span><span class="lab"><span class="dot" style="background:' + g[2] + '"></span>' + g[1] + '</span></div>'; }).join('') + '</div></section>';
+  var act = us.filter(function (u) { return ustate(u) === 'activo'; });
+  var att = act.filter(function (u) { var c = calc(u); return c.w === 'err' || c.w === 'warn'; }).sort(function (a, b) { return calc(b).r - calc(a).r; }).slice(0, 3);
+  h += '<div class="two"><section class="card"><div class="cardh"><h3>Necesitan atención</h3><span class="sp"></span>' + (can('cartera') ? '<button class="lnk" data-go="cartera">Ver los ' + act.length + ' activos</button>' : '') + '</div><div class="att">';
+  h += att.length ? att.map(function (u, i) {
+    var c = calc(u), x = c.K.util, tag = canDetail(u) ? 'button' : 'div';
+    return '<' + tag + ' class="it rise" style="--i:' + i + '"' + (tag === 'button' ? ' data-go="' + u.id + '"' : '') + '><span class="row" style="justify-content:space-between;align-items:flex-start;gap:16px;width:100%"><span style="min-width:0"><span class="nm" style="display:block">' + E(u.name) + '</span><span class="sm muted">' + E(cliName(u.client)) + ', ' + E(u.leader || '') + '</span></span><span class="kc" style="font-weight:500;white-space:nowrap"><i style="background:' + STC[x.st === 'off' ? c.w : x.st] + '"></i>Utilidad ' + x.disp + '</span></span>' +
+      '<span style="display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;width:100%">' + ubar(x.val, c.m.uExp, x.st, 6, i) + '<span class="sm muted">Esperada ' + P(c.m.uExp) + '</span></span><span class="sm muted">' + E(whyText(c)) + '</span></' + tag + '>';
+  }).join('') : '<div class="it"><span class="muted">Ningún activo en riesgo o en atención.</span></div>';
+  h += '</div></section>';
+  /* unidades: anillo y salud */
+  var byU = {}; act.forEach(function (u) { var k = u.un || '—'; (byU[k] = byU[k] || []).push(u); });
+  var keys = Object.keys(byU).sort(function (a, b) { return byU[b].length - byU[a].length; }), tot = act.length, R = 54, CIR = 2 * Math.PI * R, off = 0, arcs = '';
+  keys.forEach(function (k) { var len = byU[k].length / tot * CIR, g = keys.length > 1 ? 4 : 0; arcs += '<circle class="seg-draw" cx="66" cy="66" r="' + R + '" stroke="' + (UNC[k] || 'var(--p-TC1)') + '" stroke-dasharray="' + Math.max(0, len - g).toFixed(1) + ' ' + CIR.toFixed(1) + '" stroke-dashoffset="' + (-off).toFixed(1) + '"></circle>'; off += len; });
+  var byC = {}; act.forEach(function (u) { byC[u.client] = (byC[u.client] || 0) + 1; }); var ck = Object.keys(byC).sort(function (a, b) { return byC[b] - byC[a]; });
+  h += '<section class="card"><div class="cardh"><h3>Por unidad de negocio</h3><span class="sp"></span><span class="sm muted">Activos y su salud</span></div>';
+  if (!tot) h += '<p class="muted">No hay activos para este filtro.</p>';
+  else {
+    h += '<div class="row" style="gap:24px;align-items:center"><div style="position:relative;width:132px;height:132px;flex:none"><svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="' + keys.map(function (k) { return (UN[k] || k) + ' ' + byU[k].length; }).join(', ') + '" style="margin:0"><g transform="rotate(-90 66 66)" fill="none" stroke-width="14"><circle cx="66" cy="66" r="' + R + '" stroke="var(--line-2)"></circle>' + arcs + '</g></svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span class="mid num" style="--n:' + tot + '"></span><span class="sm muted">activos</span></div></div>';
+    h += '<div style="flex:1 1 180px;min-width:0">' + keys.map(function (k, i) { return '<div class="row rise" style="--i:' + i + ';padding:9px 0;border-bottom:1px solid var(--line-2);flex-wrap:nowrap"><span class="sq" style="background:' + (UNC[k] || 'var(--p-TC1)') + '"></span><span class="sp">' + E(UN[k] || k) + '</span><b>' + byU[k].length + '</b></div>'; }).join('') + '</div></div>';
+    h += '<div style="display:flex;flex-direction:column;gap:12px;padding-top:14px;margin-top:14px;border-top:1px solid var(--line-2)"><div class="row"><span class="sm b">Salud por unidad</span><span class="sp"></span><span class="leg"><span><i style="background:var(--err)"></i>Riesgo</span><span><i style="background:var(--warn)"></i>Atención</span><span><i style="background:var(--ok)"></i>Al día</span></span></div>';
+    h += keys.map(function (k, i) { var n = { err: 0, warn: 0, ok: 0, off: 0 }; byU[k].forEach(function (u) { n[calc(u).w]++; }); return '<div style="display:grid;grid-template-columns:130px minmax(0,1fr);align-items:center;gap:12px"><span class="sm muted">' + E(UN[k] || k) + '</span><span class="stk" style="height:10px" title="' + n.err + ' en riesgo, ' + n.warn + ' en atención, ' + n.ok + ' al día">' + ['err', 'warn', 'ok', 'off'].filter(function (s) { return n[s]; }).map(function (s) { return '<i class="grow" style="--i:' + i + ';flex:' + n[s] + ' 1 0;background:' + STC[s] + '"></i>'; }).join('') + '</span></div>'; }).join('') + '</div>';
+    h += '<p class="sm muted" style="margin-top:14px">' + ck.length + ' clientes distintos. El de mayor peso, ' + E(cliName(ck[0])) + ', es el ' + Math.round(byC[ck[0]] / tot * 100) + ' % de los activos.</p>';
+  }
+  h += '</section></div>';
+  /* ritmo */
+  var lv = []; us.forEach(function (u) { leaves(u).forEach(function (k) { lv.push(k); }); });
+  var cierran = lv.filter(function (k) { return k.state === 'activo' && k.p.end >= TODAY && diff(TODAY, k.p.end) <= 30; }).sort(function (a, b) { return a.p.end < b.p.end ? -1 : 1; });
+  var arrancan = lv.filter(function (k) { return (k.state === 'pendiente' || k.p.start > TODAY) && k.state !== 'cancelado' && diff(TODAY, k.p.start) <= 30; }).sort(function (a, b) { return a.p.start < b.p.start ? -1 : 1; });
+  var vencidos = lv.filter(function (k) { return k.state === 'activo' && k.p.end < TODAY; });
+  function lst(a, f, vacio) { return a.length ? a.map(function (k) { var d = diff(TODAY, f(k)); return '<div class="row" style="justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid var(--line-2)"><span style="min-width:0"><span class="nm" style="display:block">' + E(k.name) + '</span><span class="sm muted">' + E(cliName(k.client)) + ', ' + dshort(f(k)) + '</span></span><span class="pill ' + (d < 0 ? 'warn' : 'pri') + '">' + (d === 0 ? 'Hoy' : d < 0 ? 'Debió iniciar hace ' + (-d) + ' días' : 'En ' + d + ' días') + '</span></div>'; }).join('') : '<p class="muted sm">' + vacio + '</p>'; }
+  h += '<section class="card"><div class="cardh"><h3>Próximos 30 días</h3></div><div class="row" style="align-items:flex-start;gap:28px"><div style="flex:1 1 280px;min-width:0"><div class="eyebrow" style="padding-bottom:8px">Cierran (' + cierran.length + ')</div>' + lst(cierran, function (k) { return k.p.end; }, 'Ningún proyecto cierra en este plazo.') + '</div><div style="flex:2 1 420px;min-width:0"><div class="eyebrow" style="padding-bottom:8px">Arrancan (' + arrancan.length + ')</div>' + lst(arrancan, function (k) { return k.p.start; }, 'Ningún proyecto arranca en este plazo.') + '</div></div>' + (vencidos.length ? '<div class="al warn" style="margin-top:12px"><span class="t">' + vencidos.length + ' activo' + (vencidos.length > 1 ? 's' : '') + ' con la fecha de fin vencida: ' + vencidos.map(function (k) { return E(k.name); }).join(', ') + '.</span></div>' : '') + '</section>';
+  return h + footSim();
+}
+
+/* ---------- Proyectos y Servicios ---------- */
+function kcell(x) { return '<span class="kc" title="' + E(x.dev) + '"><i style="background:' + STC[x.st] + '"></i>' + x.disp + '</span>'; }
+function rowHTML(u, i, kid) {
+  var c = calc(u), K = c.K, w = c.w, exp = S.open[u.id];
+  var h = '<div class="grid cp rw' + (kid ? ' kid' : ' rise') + '" style="--i:' + i + '" data-go="' + u.id + '">';
+  h += '<span class="lab" style="font-size:13px"><span class="dot" style="background:' + STC[w] + '"></span>' + STL[w] + '</span>';
+  h += '<div style="min-width:0;display:flex;gap:10px;align-items:flex-start">' + ktTile(u, 'md') + '<div style="min-width:0"><button class="nm" data-go="' + u.id + '" style="display:block">' + E(u.name) + '</button><span class="sm muted">' + E(cliName(u.client)) + ', ' + E(u.leader || '') + '</span>' + (u.kids ? ' <button class="tw" data-tw="' + u.id + '" aria-expanded="' + !!exp + '">' + (exp ? 'Ocultar' : 'Ver') + ' los ' + u.kids.length + ' proyectos</button>' : (u.kind === 'servicio' && !KT ? ' <span class="pill off" style="font-size:11px;padding:0 8px">Servicio</span>' : '')) + '</div></div>';
+  h += '<div style="display:flex;flex-direction:column;gap:6px;padding-right:8px"><span class="kc" style="font-weight:500" title="' + E(K.util.dev) + '"><i style="background:' + STC[K.util.st] + '"></i>' + K.util.disp + '</span>' + ubar(K.util.val, c.m.uExp, K.util.st, 5, i) + '</div>';
+  h += kcell(K.prod) + kcell(K.horas) + kcell(K.costo) + kcell(K.fact);
+  h += c.m.hasProy ? (c.m.avance == null ? '<span class="sm muted">Sin avance</span>' : '<div style="display:flex;flex-direction:column;gap:6px"><span class="kc">' + P(c.m.avance) + '</span><span class="trk" style="height:5px"><span class="f grow" style="--i:' + i + ';width:' + Math.min(100, c.m.avance) + '%"></span></span></div>') : '<span class="sm muted">No aplica</span>';
+  h += '</div>';
+  if (u.kids && exp) h += u.kids.slice().sort(function (a, b) { return calc(b).r - calc(a).r; }).map(function (k) { return rowHTML(k, i, true); }).join('');
+  return h;
+}
+function carteraView() {
+  var all = myUnits(), clis = {}, uns = {}, own = OWN.indexOf(ROLE) >= 0;
+  all.forEach(function (u) { clis[u.client] = cliName(u.client); uns[u.un] = UN[u.un] || u.un; });
+  var us = all.filter(passEst).filter(passTipo).filter(function (u) { return (!S.fCli || u.client === S.fCli) && (!S.fUn || u.un === S.fUn); });
+  us.sort(function (a, b) { return calc(b).r - calc(a).r || (a.name < b.name ? -1 : 1); });
+  var cnt = { err: 0, warn: 0, ok: 0, off: 0 }; us.forEach(function (u) { cnt[calc(u).w]++; });
+  var h = headHTML('Analítica', (own || S.mine ? 'Tus proyectos y servicios' : 'Toda la compañía') + ', acumulado al ' + dshort(TODAY), tipoSeg()) + navTabs('cartera') + '<div class="filters">';
+  if (CAN_ALL.indexOf(ROLE) >= 0) h += '<div class="seg" role="group" aria-label="Alcance"><button data-mine="1" aria-pressed="' + !!S.mine + '">Mis proyectos</button><button data-mine="0" aria-pressed="' + !S.mine + '">Toda la compañía</button></div>';
+  h += '<select id="fe" data-f="fEst" aria-label="Estado">' + selOpts([['activo', 'Activos'], ['cerrado', 'Cerrados'], ['auditoria', 'En auditoría documental'], ['todos', 'Todos los estados']], S.fEst) + '</select>';
+  h += '<select id="fc" data-f="fCli" aria-label="Cliente"><option value="">Todos los clientes</option>' + selOpts(Object.keys(clis).map(function (k) { return [k, clis[k]]; }), S.fCli) + '</select>';
+  h += '<select id="fu" data-f="fUn" aria-label="Unidad de negocio"><option value="">Todas las unidades</option>' + selOpts(Object.keys(uns).map(function (k) { return [k, uns[k]]; }), S.fUn) + '</select>' + (KT ? KT.clearBtn((S.tipo !== 'todos') + (S.fEst !== 'activo') + !!S.fCli + !!S.fUn, ' data-fclr="cartera"') : '') + '</div>';
+  if (S.errOdoo) h += bannerOdoo();
+  var n = us.length;
+  h += '<section class="card flush" aria-label="Proyectos y servicios ordenados por riesgo"><div class="cardh"><h3>Primero lo que más necesita atención</h3><span class="sp"></span>';
+  if (n) h += '<span class="stk" role="img" aria-label="' + cnt.err + ' en riesgo, ' + cnt.warn + ' en atención, ' + cnt.ok + ' al día" style="width:160px;height:8px">' + ['err', 'warn', 'ok', 'off'].filter(function (s) { return cnt[s]; }).map(function (s, i) { return '<i class="grow" style="--i:' + i + ';flex:' + cnt[s] + ' 1 0;background:' + STC[s] + '"></i>'; }).join('') + '</span>';
+  h += '<span class="leg"><span><i style="background:var(--err)"></i>' + cnt.err + ' en riesgo</span><span><i style="background:var(--warn)"></i>' + cnt.warn + ' en atención</span><span><i style="background:var(--ok)"></i>' + cnt.ok + ' al día</span>' + (cnt.off ? '<span><i style="background:var(--off-ink)"></i>' + cnt.off + ' sin datos</span>' : '') + '</span></div>';
+  if (!n) h += '<div class="state"><h3>No hay proyectos con estos filtros</h3><p>Cambia el estado, el cliente o la unidad de negocio.</p></div>';
+  else h += '<div class="tbl"><div style="min-width:1060px"><div class="grid cp hd"><span>Estado</span><span>Proyecto o servicio</span><span style="color:var(--ink);font-weight:600">Utilidad</span><span>Productividad</span><span>Horas</span><span>Costo</span><span>Facturación</span><span>Avance</span></div>' + us.map(function (u, i) { return rowHTML(u, i); }).join('') + '</div></div>';
+  h += '<div class="cardf"><span>' + n + ' ' + (n === 1 ? 'registro' : 'registros') + ', ordenados por riesgo. La marca vertical es la utilidad esperada del análisis de negocio de cada uno.</span>' + simTag() + '</div></section>';
+  if (ROLE === 'planeacion') h += asertividad();
+  return h;
+}
+function bannerOdoo() { return '<div class="banner" role="status">' + ic('warn') + '<span class="sp">No se pudo consultar Odoo: costos, facturación y utilidad no están disponibles. Horas y avance sí.</span><button class="btn" data-retry="1">Reintentar</button></div>'; }
+function asertividad() {
+  var seg = [['Falta de personal', 38], ['Falta de capacitación', 24], ['Cambio de alcance', 21], ['Otros', 17]];
+  return '<section class="card ph" aria-labelledby="as-t"><div class="cardh"><h3 id="as-t">Asertividad de planeación</h3><span class="pill off">Ejemplo · pendiente de definir</span><span class="sp"></span><span class="sm muted">Solo visible para Planeación</span></div><p class="sm muted" style="margin-bottom:12px">Compara los recursos planeados con los ejecutados. Corte mensual probable; segmentos y causas aún sin definir. Datos de ejemplo, no reales.</p><div class="hb">' + seg.map(function (s) { return '<div class="r"><span>' + s[0] + '</span><span class="trk"><span class="f q" style="width:' + s[1] * 2 + '%"></span></span><b>' + s[1] + ' %</b></div>'; }).join('') + '</div></section>';
+}
+
+/* ---------- detalle de proyecto ---------- */
+function utilHero(e, m, K) {
+  var x = K.util, ex = m.uExp, has = x.val != null && m.fE > 0, d = has ? x.val - ex : 0;
+  var h = '<section class="card hero" aria-label="Utilidad"><div class="hl"><div class="row" style="gap:12px"><h3>Utilidad</h3><span class="pill ' + (x.st === 'off' ? 'off' : x.st) + '"><span class="dot" style="width:6px;height:6px;background:' + STC[x.st] + '"></span>' + (x.st === 'ok' ? 'En meta' : STL[x.st]) + '</span></div>';
+  h += '<div class="rise" style="display:flex;flex-direction:column;gap:4px"><span class="huge">' + x.disp + '</span><span class="muted" style="font-size:13px">' + (has ? nf1.format(Math.abs(d)) + ' puntos ' + (d >= 0 ? 'por encima' : 'por debajo') + ' de lo esperado en el análisis de negocio (' + P(ex) + ')' : E(x.dev)) + '</span></div>';
+  if (has) h += '<div><div class="scale"><span class="ml" style="left:' + Math.min(100, ex / 60 * 100) + '%">Esperada ' + P(ex) + '</span><span class="tr"></span><span class="fl grow" style="width:' + Math.max(1, Math.min(100, x.val / 60 * 100)) + '%;background:' + STC[x.st] + '"></span><span class="tk" style="left:' + Math.min(100, ex / 60 * 100) + '%"></span></div><div class="row sm muted" style="justify-content:space-between;margin-top:4px"><span>0 %</span><span>60 %</span></div></div>';
+  h += '<div style="display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:1px solid var(--line-2)">' + (x.causa ? '<p class="muted" style="font-size:13px;max-width:62ch">' + E(x.causa) + '</p>' : '') + '<div class="row" style="gap:18px">' + (has ? '<a class="lnk" href="#wf" data-wf="1">Ver puente de utilidad</a>' : '') + (canNeg(e) ? '<button class="lnk" data-go="' + e.id + '|negocio">Ver análisis de negocio</button>' : '') + '</div></div></div>';
+  h += '<div class="hr"><div class="row" style="justify-content:space-between;padding-bottom:10px"><span class="b">Resultado</span>' + simTag() + '</div>';
+  if (has) h += '<div class="kv"><span>Facturado</span><span>' + M(m.fE) + '</span></div><div class="kv"><span>Costo total</span><span>' + M(-m.cE) + '</span></div><div class="kv"><span class="b" style="color:var(--ink)">Utilidad</span><span class="b">' + M(m.fE - m.cE) + '</span></div><div class="kv"><span>Utilidad esperada (' + P(ex) + ')</span><span>' + M(m.fE * ex / 100) + '</span></div>';
+  else h += '<p class="sm muted">La utilidad se calcula cuando se emite la primera factura.</p>';
+  return h + '</div></section>';
+}
+function indicadores(e, m, K) {
+  var tgt = { horas: 'horas', costo: 'costos', fact: 'facturacion', prod: 'horas' };
+  var cols = ['prod', 'horas', 'costo', 'fact'].map(function (k, i) {
+    var x = K[k], off = S.errOdoo && x.sim, st = off ? 'off' : x.st, pct = x.val == null ? 0 : Math.max(0, Math.min(100, x.val));
+    return '<div class="k rise" style="--i:' + i + '"><span class="lab"><span class="dot" style="width:6px;height:6px;background:' + STC[st] + '"></span>' + x.label + (x.sim ? ' <span class="sim" style="padding:0 6px">sim.</span>' : '') + '</span><span class="mid">' + (off ? '—' : x.disp) + '</span><span class="trk" style="height:5px"><span class="f grow" style="--i:' + i + ';width:' + (off ? 0 : pct) + '%"></span></span><span class="cs">' + E(off ? 'Odoo no disponible' : x.meta || x.dev) + '</span>' + (!off && x.causa ? '<span class="cs">' + E(x.causa) + '</span>' : '') + (!off && x.st !== 'off' ? '<button class="lnk" style="font-size:12px" data-go="' + e.id + '|' + tgt[k] + '">Ver detalle</button>' : '') + '</div>';
+  });
+  if (m.hasProy) cols.push('<div class="k rise" style="--i:4"><span class="lab"><span class="dot" style="width:6px;height:6px;background:' + (m.sinAvance ? 'var(--warn)' : 'var(--primary)') + '"></span>Avance</span><span class="mid">' + (m.avance == null ? '—' : P(m.avance)) + '</span><span class="trk" style="height:5px"><span class="f grow" style="--i:4;width:' + Math.min(100, m.avance || 0) + '%"></span></span><span class="cs">Ponderado por horas cotizadas de cada fase</span></div>');
+  return '<section class="card" aria-label="Indicadores"><div class="cardh"><h3>Indicadores</h3><span class="sp"></span><span class="sm muted">Umbrales definidos en Configuración</span></div><div class="kpl">' + cols.join('') + '</div></section>';
+}
+var PERFC = { 'Ingeniero senior': 'var(--p-E1)', 'Ingeniero': 'var(--p-E2)', 'Analista': 'var(--p-E3)' };
+function perfilCard(m) {
+  var hrs = []; m.list.forEach(function (s) { s.hours.forEach(function (r) { hrs.push(r); }); }); if (!hrs.length) return '';
+  var g = groupSum(hrs, function (r) { return r.perfil || 'Sin perfil'; }, function (r) { return r.h; }).sort(function (a, b) { return b.v - a.v; }), mx = g[0].v;
+  return '<section class="card" aria-label="Horas por perfil"><div class="cardh"><h3>Horas por perfil</h3><span class="sp"></span><span class="sm muted">' + N(m.hE) + ' h consumidas de ' + N(m.hQ) + ' h cotizadas</span></div><div class="hb">' + g.map(function (x, i) { var c = PERFC[x.l] || 'var(--p-TC1)'; return '<div class="r"><span><span class="sq" style="background:' + c + ';margin-right:8px;vertical-align:-1px"></span>' + E(x.l) + '</span><span class="trk" style="height:10px;border-radius:5px"><span class="f grow" style="--i:' + i + ';width:' + x.v / mx * 100 + '%;background:' + c + ';border-radius:5px"></span></span><b>' + N(x.v) + ' h</b></div>'; }).join('') + '</div></section>';
+}
+function proyectoView(u) {
+  var e = activeEntity(u), c0 = calc(e), m = c0.m, K = c0.K, ss = m.list;
+  var h = EMB ? '' : '<div class="crumb"><button data-go="cartera">' + ic('back') + 'Proyectos y Servicios</button></div><h1 class="ttl">' + E(u.name) + '</h1>';
+  h += '<div class="row sm muted" style="gap:10px;font-size:13px">' + tipoPill(e) + estPill(e) + '<span>' + E(cliName(e.client)) + ', ' + E(UN[e.un] || '') + '</span><span>·</span><span>Líder: ' + E(e.leader || '') + '</span>' + (ss.length === 1 ? '<span>·</span><span>' + dshort(ss[0].p.start) + ' a ' + dshort(ss[0].p.end) + '</span>' : '') + '<span>·</span>' + ss.map(function (s) { return s.cecos.map(function (c) { return '<span class="pill off">CECO ' + E(c.code) + (s.sinFactCeco === c.code ? ' · sin facturación' : '') + '</span>'; }).join(' '); }).join(' ') + '</div>';
+  if (u.kind === 'sombrilla') h += '<div class="row"><label class="sm muted" for="chs">Ver:</label><select id="chs" data-child="1"><option value="todos">Todos · consolidado (suma)</option>' + u.kids.map(function (k) { return '<option value="' + k.id + '"' + (S.child === k.id ? ' selected' : '') + '>' + E(k.name) + '</option>'; }).join('') + '</select></div>';
+  if (S.errOdoo) h += bannerOdoo();
+  if (m.noData) return h + stateBox('Sin datos todavía', e.state === 'pendiente' ? 'Este proyecto aún no inicia. Verás indicadores cuando haya horas registradas.' : 'Aún no hay horas registradas.') + comentarios(u);
+  h += utilHero(e, m, K) + indicadores(e, m, K);
+  h += '<div class="two">' + avanceCard(e, m) + consumoCard(e, m) + '</div><div class="two">' + waterfall(m) + perfilCard(m) + '</div><div class="two">' + alertsCard(e, m, K) + comentarios(u) + '</div>';
+  if (u.kind === 'servicio') h += '<p class="sm muted">Los servicios no miden avance: el esperado se calcula por el tiempo transcurrido de la vigencia.</p>';
+  return h;
+}
+
+/* ---------- Analisis de Negocio ---------- */
+/* [ACORDADO 30-oct] Sin CRM: cotizaciones ganadas (pasaron a proyecto o servicio) y no ganadas. Las no ganadas son simuladas hasta conectar Cotizaciones. */
+var NEG = null, P0 = '2025-11-01';
+function negData() {
+  if (NEG) return NEG;
+  var Q = [];
+  S.units.forEach(function (u) { leaves(u).forEach(function (k) { var p = k.p, s = SIM[p.id]; if (!p || !p.quote || !s) return; Q.push({ id: p.quote, won: true, unit: k, client: p.client, un: p.un, d: addD(p.start, -21), v: s.q.f, eu: s.eu * 100 }); }); });
+  var CL = ['cli-01', 'cli-02', 'cli-03', 'cli-04', 'cli-05', 'cli-06', 'cli-07', 'cli-08', 'cli-09', 'CL5'], UNS = ['AU', 'AU', 'AU', 'SM', 'SM', 'CO'];
+  for (var i = 0; i < 17; i++) {
+    var k = Math.floor(rnd('nqd' + i) * 12), y = 2026, mo = 10 - k; if (mo <= 0) { mo += 12; y--; }
+    var d = y + '-' + (mo < 10 ? '0' : '') + mo + '-' + String(3 + Math.floor(rnd('nqdd' + i) * 22)).padStart(2, '0'); if (d > TODAY) d = TODAY;
+    Q.push({ id: 'S0' + (3820 + Math.floor(rnd('nqid' + i) * 560)), won: false, client: CL[Math.floor(rnd('nqc' + i) * CL.length)], un: UNS[Math.floor(rnd('nqu' + i) * UNS.length)], d: d, v: Math.round(160 + rnd('nqv' + i) * 1800) * RATE, eu: 33 + rnd('nqe' + i) * 13 });
+  }
+  NEG = Q; return Q;
+}
+function wavg(a) { var v = sum(a, function (q) { return q.v; }); return v ? sum(a, function (q) { return q.v * q.eu; }) / v : 0; }
+function negocioView() {
+  var own = OWN.indexOf(ROLE) >= 0, h = headHTML('Analítica', own ? 'Análisis de negocio de tus proyectos y servicios' : 'Solution Design y gerencia, últimos 12 meses al ' + dshort(TODAY), '') + navTabs('negocio');
+  if (!own) {
+    var Q = negData().filter(function (q) { return q.d >= P0 && q.d <= TODAY; }), W = Q.filter(function (q) { return q.won; }), vQ = sum(Q, function (q) { return q.v; }), vW = sum(W, function (q) { return q.v; }), mg = wavg(Q), rate = Q.length ? W.length / Q.length * 100 : 0;
+    h += '<section class="card" aria-label="Resumen comercial"><div class="cnts">' + [[M(vQ), 'Cotizado, ' + Q.length + ' cotizaciones'], [M(vW), 'Ganado, ' + W.length + ' cotizaciones'], ['<span class="num" style="--n:' + Math.round(rate) + '"></span> %', 'Tasa de éxito, ' + W.length + ' de ' + Q.length], [P(mg), 'Margen cotizado, referencia ' + META.util + ' %']].map(function (t, i) { return '<div class="cnt rise" style="--i:' + i + '"><span class="mid" style="font-size:34px">' + t[0] + '</span><span class="sm muted" style="font-size:13px">' + t[1] + '</span></div>'; }).join('') + '</div></section>';
+    var key = S.ncut === 'cli' ? function (q) { return q.client; } : S.ncut === 'mes' ? function (q) { return q.d.slice(0, 7); } : function (q) { return q.un; };
+    var lab = S.ncut === 'cli' ? cliName : S.ncut === 'mes' ? mlabel : function (k) { return UN[k] || k; };
+    var G = {}; Q.forEach(function (q) { var k = key(q); (G[k] = G[k] || []).push(q); });
+    var gk = Object.keys(G); if (S.ncut === 'mes') gk.sort(); else gk.sort(function (a, b) { return G[b].length - G[a].length || (a < b ? -1 : 1); });
+    if (S.ncut === 'cli') gk = gk.slice(0, 8);
+    var mx = Math.max.apply(null, gk.map(function (k) { return G[k].length; }).concat([1]));
+    h += '<div class="two"><section class="card" aria-label="Ganadas y no ganadas"><div class="cardh"><h3>Ganadas y no ganadas</h3><span class="sp"></span>' + seg('data-ncut', [['un', 'Por unidad'], ['cli', 'Por cliente'], ['mes', 'Por mes']], S.ncut) + '</div>';
+    h += '<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 54px 64px;gap:14px;font-size:11px;margin-bottom:12px" class="muted"><span></span><span class="leg"><span><i style="background:var(--primary)"></i>Ganadas</span><span><i style="background:var(--quot)"></i>No ganadas</span></span><span style="text-align:right">Éxito</span><span style="text-align:right">Margen</span></div><div style="display:flex;flex-direction:column;gap:14px">';
+    h += gk.map(function (k, i) { var a = G[k], w = a.filter(function (q) { return q.won; }).length, r = a.length - w, m2 = wavg(a); return '<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 54px 64px;align-items:center;gap:14px"><span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + E(lab(k)) + ' <span class="sm muted">· ' + a.length + '</span></span><span class="stk" style="height:14px;width:' + (a.length / mx * 100) + '%">' + (w ? '<i class="grow" style="--i:' + i + ';flex:' + w + ' 1 0;background:var(--primary)"></i>' : '') + (r ? '<i class="grow" style="--i:' + i + ';flex:' + r + ' 1 0;background:var(--quot)"></i>' : '') + '</span><span style="text-align:right;font-size:13px">' + Math.round(w / a.length * 100) + ' %</span><span style="text-align:right;font-size:13px;color:' + (m2 >= META.util ? 'var(--ok-ink)' : 'var(--warn-ink)') + '">' + P(m2) + '</span></div>'; }).join('');
+    h += '</div><p class="sm muted" style="margin-top:14px">Ganada es la cotización que pasó a proyecto o servicio. Margen: utilidad esperada promedio, ponderada por valor, frente a la referencia del ' + META.util + ' %.' + (S.ncut === 'cli' && Object.keys(G).length > 8 ? ' Se muestran los 8 clientes con más cotizaciones.' : '') + '</p></section>';
+    var mk = []; for (var j = 5; j >= 0; j--) { var yy = 2026, mm = 10 - j; if (mm <= 0) { mm += 12; yy--; } mk.push(yy + '-' + (mm < 10 ? '0' : '') + mm); }
+    var MC = mk.map(function (k) { var a = Q.filter(function (q) { return q.d.slice(0, 7) === k; }); return { k: k, t: a.length, w: a.filter(function (q) { return q.won; }).length }; }), mt = Math.max.apply(null, MC.map(function (x) { return x.t; }).concat([1])), U = 120 / mt, svg = '<line x1="0" y1="150" x2="440" y2="150" style="stroke:var(--line)"></line>';
+    MC.forEach(function (x, i) { var X = 22 + i * 70, hw = x.w * U, hr = (x.t - x.w) * U; if (hw) svg += '<rect class="up" style="--i:' + i + ';fill:var(--primary)" x="' + X + '" y="' + (150 - hw + 1).toFixed(1) + '" width="40" height="' + Math.max(0, hw - 2).toFixed(1) + '" rx="3"></rect>'; if (hr) svg += '<rect class="up" style="--i:' + i + ';fill:var(--quot)" x="' + X + '" y="' + (150 - hw - hr + 1).toFixed(1) + '" width="40" height="' + Math.max(0, hr - 2).toFixed(1) + '" rx="3"></rect>'; svg += '<text x="' + (X + 20) + '" y="' + (150 - hw - hr - 6).toFixed(1) + '" text-anchor="middle" font-size="12" font-weight="600">' + x.t + '</text><text x="' + (X + 20) + '" y="170" text-anchor="middle" font-size="11" style="fill:var(--muted)">' + mlabel(x.k) + '</text>'; });
+    h += '<section class="card" aria-label="Cotizaciones por mes"><div class="cardh"><h3>Cotizaciones por mes</h3><span class="sp"></span><span class="sm muted">Emitidas, con las ganadas abajo</span></div><svg viewBox="0 0 440 180" width="100%" role="img" aria-label="Cotizaciones emitidas y ganadas por mes, últimos 6 meses">' + svg + '</svg><details class="alt"><summary>Ver como tabla</summary><div class="tbl"><table><thead><tr><th>Mes</th><th class="n">Emitidas</th><th class="n">Ganadas</th></tr></thead><tbody>' + MC.map(function (x) { return '<tr><td>' + mlabel(x.k) + '</td><td class="n">' + x.t + '</td><td class="n">' + x.w + '</td></tr>'; }).join('') + '</tbody></table></div></details></section></div>';
+  }
+  var lv = []; S.units.forEach(function (u) { leaves(u).forEach(function (k) { lv.push(k); }); });
+  lv = lv.filter(function (k) { return (!own || k.leader === UNAME) && calc(k).m.fE > 0; }).sort(function (a, b) { var A = calc(a), B = calc(b); return (A.K.util.val - A.m.uExp) - (B.K.util.val - B.m.uExp); });
+  h += '<section class="card flush" aria-label="Cotizado frente a ejecutado"><div class="cardh"><h3>Cotizado frente a ejecutado</h3><span class="sp"></span><span class="sm muted">Utilidad esperada según el análisis de negocio de cada proyecto o servicio</span></div>';
+  if (!lv.length) h += '<div class="state"><h3>Sin proyectos con facturación</h3><p>' + (own ? 'Cuando tus proyectos o servicios facturen verás aquí su análisis.' : 'Aún no hay proyectos o servicios con facturación.') + '</p></div>';
+  else h += '<div class="tbl"><div style="min-width:880px"><div class="grid hd" style="grid-template-columns:minmax(260px,2.2fr) repeat(3,minmax(90px,1fr)) minmax(150px,1.4fr)"><span>Proyecto o servicio</span><span style="text-align:right">Esperada</span><span style="text-align:right">Actual</span><span style="text-align:right">Diferencia</span><span>Esperada contra actual</span></div>' + lv.map(function (k, i) { var c = calc(k), a = c.K.util.val, ex = c.m.uExp, d = a - ex; return '<div class="grid rw rise" style="--i:' + i + ';grid-template-columns:minmax(260px,2.2fr) repeat(3,minmax(90px,1fr)) minmax(150px,1.4fr)" data-go="' + k.id + '|negocio"><div style="min-width:0"><button class="nm" data-go="' + k.id + '|negocio" style="display:block">' + E(k.name) + '</button><span class="sm muted">' + E(cliName(k.client)) + ', ' + (k.kind === 'servicio' ? 'Servicio' : 'Proyecto') + '</span></div><span style="text-align:right">' + P(ex) + '</span><span style="text-align:right">' + P(a) + '</span><span style="text-align:right;font-weight:500;color:' + (d >= 0 ? 'var(--ok-ink)' : d > -6 ? 'var(--warn-ink)' : 'var(--err-ink)') + '">' + (d >= 0 ? '+' : '−') + nf1.format(Math.abs(d)) + ' pp</span>' + ubar(Math.max(0, a), ex, 'ok', 6, i).replace('background:var(--ok)', 'background:var(--primary)') + '</div>'; }).join('') + '</div></div>';
+  h += '<div class="cardf"><span>La marca vertical es la utilidad esperada de cada análisis. Un servicio se compara igual, sin avance.</span><span class="row">' + simTag('Cotizaciones') + simTag() + '</span></div></section>';
+  return h;
+}
+function negocioProyView(u) {
+  var e = activeEntity(u), c = calc(e), m = c.m, K = c.K, ex = m.uExp, F = m.fQ, CQ = m.cQ, ss = m.list, p = ss.length === 1 ? ss[0].p : null;
+  var h = (EMB ? '<div class="crumb"><button data-go="' + u.id + '">' + ic('back') + 'Volver al resumen de analítica</button></div>' : '<div class="crumb"><button data-go="' + (can('negocio') && OWN.indexOf(ROLE) < 0 ? 'negocio' : canDetail(u) ? u.id : 'negocio') + '">' + ic('back') + (can('negocio') && OWN.indexOf(ROLE) < 0 ? 'Análisis de Negocio' : canDetail(u) ? E(u.name) : 'Análisis de Negocio') + '</button></div>') + '<h1 class="ttl">' + E(e.name) + '</h1>';
+  h += '<div class="row sm muted" style="gap:10px;font-size:13px">' + tipoPill(e) + '<span>Análisis de negocio de la cotización' + (p ? ' ' + E(p.quote) : '') + '</span><span>·</span><span>' + E(cliName(e.client)) + ', ' + E(UN[e.un] || '') + '</span><span>·</span><span>Líder: ' + E(e.leader || '') + '</span></div>';
+  var av = K.util.val;
+  h += '<section class="card hero" aria-label="Lo cotizado"><div class="hl" style="padding:24px 0"><div class="cnts" style="margin:0">' + [['Valor cotizado', M(F), ''], ['Costo presupuestado', M(CQ), ''], ['Utilidad esperada', M(F - CQ), P(ex) + ' del valor']].map(function (t, i) { return '<div class="cnt rise" style="--i:' + i + '"><span class="muted" style="font-size:13px">' + t[0] + '</span><span class="mid" style="font-size:34px">' + t[1] + '</span>' + (t[2] ? '<span class="sm muted">' + t[2] + '</span>' : '') + '</div>'; }).join('') + '</div></div>';
+  h += '<div class="hr" style="gap:14px"><span class="b">Utilidad esperada frente a actual</span><div class="cmp"><span>Esperada</span><span class="trk"><span class="f q grow" style="width:' + Math.min(100, ex / 60 * 100) + '%"></span></span><b>' + P(ex) + '</b></div><div class="cmp"><span>Actual</span><span class="trk"><span class="f grow" style="--i:1;width:' + (av == null ? 0 : Math.max(1, Math.min(100, av / 60 * 100))) + '%"></span></span><b>' + (av == null ? '—' : P(av)) + '</b></div><span class="sm muted">Escala de 0 a 60 %. ' + (av == null ? 'Aún no hay facturación.' : 'Hoy la utilidad va ' + nf1.format(Math.abs(av - ex)) + ' puntos ' + (av >= ex ? 'por encima' : 'por debajo') + ' de lo cotizado.') + '</span></div></section>';
+  var comp = ['Ingeniería', 'Viáticos', 'Otros'].map(function (k) { return [k, m.cat[k].q]; }).filter(function (x) { return x[1] > 0; }), cmx = Math.max.apply(null, comp.map(function (x) { return x[1]; }).concat([1]));
+  var wks = p ? Math.max(1, Math.round(diff(p.start, p.end) / 7)) : null;
+  h += '<div class="two"><section class="card" aria-label="Costo presupuestado"><div class="cardh"><h3>Costo presupuestado por componente</h3><span class="sp"></span><span class="sm muted">' + M(CQ) + ' en total</span></div><div class="hb">' + comp.map(function (x, i) { return '<div class="r"><span>' + x[0] + '</span><span class="trk"><span class="f grow" style="--i:' + i + ';width:' + x[1] / cmx * 100 + '%"></span></span><b>' + M(x[1]) + ' <span class="muted">· ' + Math.round(x[1] / CQ * 100) + ' %</span></b></div>'; }).join('') + '</div></section>';
+  h += '<section class="card" aria-label="Supuestos"><div class="cardh"><h3>Supuestos del análisis</h3><span class="sp"></span>' + simTag('Cotizaciones') + '</div><div style="margin:-12px 0 -4px">' + [['Horas presupuestadas', N(m.hQ) + ' h'], wks ? ['Plazo', wks + ' semanas (' + dshort(p.start) + ' a ' + dshort(p.end) + ')'] : null, ['Tarifa de venta por hora', COP(RATE)], ['Costo medio por hora', COP(COSTH)], ['Utilidad esperada', P(ex)]].filter(Boolean).map(function (r, i) { return '<div class="kv"' + (i === 0 ? ' style="border-top:0"' : '') + '><span>' + r[0] + '</span><span>' + r[1] + '</span></div>'; }).join('') + '</div></section></div>';
+  var ex2 = [['Facturación', m.fE, m.fQ, M], ['Costo', m.cE, m.cQ, M], ['Horas', m.hE, m.hQ, function (v) { return N(v) + ' h'; }]];
+  h += '<section class="card" aria-label="Ejecutado frente a lo cotizado"><div class="cardh"><h3>Ejecutado frente a lo cotizado</h3><span class="sp"></span><span class="sm muted">' + (m.hasProy ? 'Los servicios se miden igual, sin la fila de avance' : 'Servicio: se mide sin avance') + '</span></div><div class="hb">' + ex2.map(function (r, i) { var pc = r[2] ? r[1] / r[2] * 100 : 0; return '<div class="r" style="grid-template-columns:120px minmax(0,1fr) auto"><span>' + r[0] + '</span><span class="trk"><span class="f grow" style="--i:' + i + ';width:' + Math.min(100, pc) + '%"></span></span><b>' + r[3](r[1]) + ' <span class="muted">de ' + r[3](r[2]) + ' · ' + P(pc) + '</span></b></div>'; }).join('') + (m.hasProy ? '<div class="r" style="grid-template-columns:120px minmax(0,1fr) auto"><span>Avance</span><span class="trk"><span class="f grow" style="--i:3;width:' + Math.min(100, m.avance || 0) + '%"></span></span><b>' + (m.avance == null ? 'Sin avance' : P(m.avance)) + '</b></div>' : '') + '</div><div class="cardf" style="margin:16px -16px -16px">' + (canDetail(u) ? '<button class="lnk" data-go="' + u.id + '">Ver el detalle de ejecución</button>' : '<span></span>') + '<span class="row">' + simTag() + '</span></div></section>';
+  return h;
+}
+
+/* ---------- Ocupacion (solo Planeacion) ---------- */
+/* [ACORDADO 30-oct] Horas colocadas en Ejecucion por ingeniero y semana. Meta = capacidad de la semana que define Ejecucion (42 h; menos con festivos).
+   Tres estados: subasignado (< meta), en rango (= meta), sobreasignado (> meta). Sin porcentajes ni diferencias. */
+var OCC = null;
+function occData() {
+  if (OCC) return OCC;
+  var X = window.KX; if (!X) return null;
+  var ctx = X.context(), db = X.load(ctx);
+  OCC = { X: X, db: db, persons: ctx.persons.filter(function (p) { return p.active; }), cur: X.CUR };
+  return OCC;
+}
+function occInit(o) { if (S.occ) return; var c = o.cur.week; S.occ = { y: o.cur.year, ws: [c - 2, c - 1, c].filter(function (w) { return w >= 1; }), from: Math.max(1, c - 9), st: 'todos', q: '' }; }
+function wlabel(X, y, w) { var s = X.weekStart(y, w), e2 = X.add(s, 6), d1 = +s.slice(8), d2 = +e2.slice(8), m1 = MES[+s.slice(5, 7) - 1], m2 = MES[+e2.slice(5, 7) - 1]; return m1 === m2 ? d1 + '–' + d2 + ' ' + m2 : d1 + ' ' + m1 + ' – ' + d2 + ' ' + m2; }
+function hasHol(X, y, w) { return X.workdays(y, w).length < 5; }
+function ostate(h, cap) { return h < cap ? 'sub' : h > cap ? 'sobre' : 'ok'; }
+function avatar(name) { var u = SH && SH.users ? SH.users.filter(function (x) { return x.name === name; })[0] : null, ini = name.split(' ').slice(0, 2).map(function (w) { return w.charAt(0); }).join(''); return '<span class="av" aria-hidden="true">' + (u && SH.photo ? SH.photo(u.face) : '<span class="ini">' + E(ini) + '</span>') + '</span>'; }
+var OST = { sub: 'Subasignados', ok: 'En rango', sobre: 'Sobreasignados' }, OSC = { sub: 'var(--warn)', ok: 'var(--primary)', sobre: 'var(--err)' };
+function ocupacionView() {
+  var o = occData(), h = headHTML('Analítica', 'Planeación, horas colocadas en Ejecución al ' + dshort(TODAY), '') + navTabs('ocupacion');
+  if (!o) return h + stateBox('No se pudo leer Ejecución', 'Las horas de Ejecución no están disponibles en este momento.');
+  occInit(o); var X = o.X, Y = S.occ.y, W = S.occ.ws.slice().sort(function (x, y) { return x - y; });
+  var caps = W.map(function (w) { return X.capacity(Y, w); });
+  var rows = o.persons.map(function (p) { var hs = W.map(function (w) { return X.total(o.db, p.name, Y, w); }); return { p: p, hs: hs, st: hs.map(function (v, i) { return ostate(v, caps[i]); }) }; });
+  var any = function (r, s) { return r.st.indexOf(s) >= 0; };
+  var cntP = { sub: rows.filter(function (r) { return any(r, 'sub'); }).length, sobre: rows.filter(function (r) { return any(r, 'sobre'); }).length };
+  /* resumen por semana */
+  h += '<div class="two"><section class="card" aria-label="Personas por estado, semana a semana"><div class="cardh"><h3>Personas por estado, semana a semana</h3><span class="sp"></span><span class="leg"><span><i style="background:var(--warn)"></i>Subasignados</span><span><i style="background:var(--primary)"></i>En rango</span><span><i style="background:var(--err)"></i>Sobreasignados</span></span></div><div style="display:flex;flex-direction:column;gap:12px">';
+  h += W.map(function (w, i) { var n = { sub: 0, ok: 0, sobre: 0 }; rows.forEach(function (r) { n[r.st[i]]++; }); return '<div style="display:grid;grid-template-columns:92px minmax(0,1fr);align-items:center;gap:14px"><span style="font-size:13px"><b style="font-weight:500">' + wlabel(X, Y, w) + '</b></span><span class="stk" style="height:14px" title="' + n.sub + ' subasignados, ' + n.ok + ' en rango, ' + n.sobre + ' sobreasignados">' + ['sub', 'ok', 'sobre'].filter(function (s) { return n[s]; }).map(function (s) { return '<i class="grow" style="--i:' + i + ';flex:' + n[s] + ' 1 0;background:' + OSC[s] + '"></i>'; }).join('') + '</span></div>'; }).join('');
+  h += '<p class="sm muted">Cada barra suma ' + rows.length + ' personas.</p></div></section>';
+  var li = W.length - 1, nl = { sub: 0, ok: 0, sobre: 0 }; rows.forEach(function (r) { nl[r.st[li]]++; });
+  h += '<section class="card" aria-label="Última semana elegida"><div class="cardh"><h3>Semana del ' + wlabel(X, Y, W[li]) + '</h3><span class="sp"></span><span class="sm muted">Meta: ' + N(caps[li]) + ' h por persona' + (hasHol(X, Y, W[li]) ? ' (festivo)' : '') + '</span></div><div class="cnts">' + [['sub', 'var(--warn-ink)'], ['ok', 'var(--ink)'], ['sobre', 'var(--err-ink)']].map(function (t, i) { return '<div class="cnt rise" style="--i:' + i + '"><span class="big num" style="--n:' + nl[t[0]] + ';color:' + t[1] + '"></span><span class="sm muted">' + OST[t[0]] + '</span></div>'; }).join('') + '</div></section></div>';
+  /* filtros y semanas */
+  h += '<div class="filters"><div class="seg" role="group" aria-label="Estado">' + [['todos', 'Todos', ''], ['sub', 'Subasignados', '<b class="w">' + cntP.sub + '</b>'], ['ok', 'En rango', ''], ['sobre', 'Sobreasignados', '<b class="e">' + cntP.sobre + '</b>']].map(function (x) { return '<button data-ost="' + x[0] + '" aria-pressed="' + (S.occ.st === x[0]) + '">' + x[1] + ' ' + x[2] + '</button>'; }).join('') + '</div><input id="oq" type="search" data-oq="1" aria-label="Buscar ingeniero" placeholder="Buscar ingeniero" value="' + E(S.occ.q) + '" style="width:220px"></div>';
+  var to = Math.min(o.cur.week, S.occ.from + 9);
+  h += '<div class="weeks" role="group" aria-label="Semanas a mostrar, hasta 4"><button class="icon-btn" data-onav="-1" aria-label="Semanas anteriores"' + (S.occ.from <= 1 ? ' disabled' : '') + '>' + ic('back') + '</button><div class="wlist">';
+  for (var k = S.occ.from; k <= to; k++) h += '<button class="wk' + (k === o.cur.week ? ' cur' : '') + '" aria-pressed="' + (S.occ.ws.indexOf(k) >= 0) + '" data-ow="' + k + '"><b>' + wlabel(X, Y, k) + '</b><small>W' + k + (hasHol(X, Y, k) ? ' · festivo' : '') + '</small></button>';
+  h += '</div><button class="icon-btn" data-onav="1" aria-label="Semanas siguientes"' + (to >= o.cur.week ? ' disabled' : '') + '>' + ic('fwd') + '</button></div>';
+  /* tabla */
+  var q = S.occ.q.trim().toLowerCase();
+  var shown = rows.filter(function (r) { return (S.occ.st === 'todos' || any(r, S.occ.st)) && (!q || r.p.name.toLowerCase().indexOf(q) >= 0); });
+  var bad = function (r) { return r.st.filter(function (s) { return s !== 'ok'; }).length; };
+  shown.sort(function (a, b) { return bad(b) - bad(a) || (a.p.name < b.p.name ? -1 : 1); });
+  h += '<section class="card flush" aria-label="Horas colocadas por ingeniero"><div class="cardh"><h3>Horas colocadas por ingeniero</h3><span class="sp"></span><span class="sm muted">En la meta está en rango; menos es subasignado y más es sobreasignado.</span></div>';
+  if (!shown.length) h += '<div class="state"><h3>Nadie con este filtro</h3><p>Cambia el estado o la búsqueda.</p></div>';
+  else h += '<div class="tbl"><div style="min-width:' + (260 + W.length * 110) + 'px"><div class="grid oc hd" style="--nw:' + W.length + '"><span>Ingeniero</span>' + W.map(function (w, i) { return '<span style="text-align:center;line-height:1.3"><span style="display:block;font-weight:600;color:var(--ink)">' + wlabel(X, Y, w) + '</span>W' + w + ' · ' + N(caps[i]) + ' h</span>'; }).join('') + '</div>' + shown.map(function (r, i) { return '<div class="grid oc rw rise" style="--i:' + Math.min(i, 12) + ';--nw:' + W.length + '"><span class="row" style="flex-wrap:nowrap;gap:10px;min-width:0">' + avatar(r.p.name) + '<span class="nm" style="font-size:13px">' + E(r.p.name) + '</span></span>' + r.hs.map(function (v, j) { return '<span class="cell ' + r.st[j] + '" title="' + E(r.p.name) + ', ' + wlabel(X, Y, W[j]) + ': ' + OST[r.st[j]].toLowerCase().replace(/s$/, '') + '">' + nf1.format(v) + ' h</span>'; }).join('') + '</div>'; }).join('') + '</div></div>';
+  h += '<div class="cardf"><span>' + shown.length + ' de ' + rows.length + ' ingenieros, los que requieren acción primero. Las reglas de horas, ausencias y festivos son las de Ejecución.</span><span class="sim">Ejecución · local</span></div></section>';
+  return h;
+}
+/* igual que Ejecucion: tocar selecciona; tocar de nuevo quita; maximo 4; la quinta reinicia a la semana actual */
+function occClick(w) {
+  var o = S.occ, cur = OCC.cur.week, i = o.ws.indexOf(w);
+  if (i >= 0) { o.ws.splice(i, 1); if (!o.ws.length) o.ws = [cur]; }
+  else if (o.ws.length >= 4) o.ws = [cur];
+  else o.ws.push(w);
+}
+
+/* ---------- piezas del detalle (se conservan) ---------- */
+/* ---------- Nivel 2: proyecto / servicio / sombrilla ---------- */
+function gotoAvance(pid) {
+  try { localStorage.setItem('kairos-proyectos-goto', JSON.stringify({ id: pid, tab: 'avance', t: Date.now() })); } catch (e) {}
+  try { window.parent.KAIROS_HOST.show('proyectos'); } catch (e) { toast('Abre Proyectos → Avance para actualizar.'); }
+}
+function toast(t) { var d = document.createElement('div'); d.className = 'banner'; d.setAttribute('role', 'status'); d.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9;box-shadow:var(--shadow-sm)'; d.textContent = t; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 3200); }
+function activeEntity(u) { if (u.kind === 'sombrilla' && S.child !== 'todos') { var k = u.kids.filter(function (x) { return x.id === S.child; })[0]; if (k) return k; } return u; }
+function avanceCard(u, m) {
+  var rows = m.list.filter(function (s) { return s.p.cat === 'proyecto'; }); if (!rows.length) return '';
+  var h = '<section class="card"><div class="cardh"><h3>Avance</h3><span class="sm muted">Ponderado por horas cotizadas de cada fase</span><span class="sp"></span>';
+  if (m.avance != null) h += '<b style="font-size:22px">' + P(m.avance) + '</b>';
+  h += '</div>';
+  rows.forEach(function (s) {
+    var a = s.av, multi = rows.length > 1;
+    h += '<div style="margin-bottom:14px">' + (multi ? '<div class="b" style="margin-bottom:6px">' + E(s.p.name) + '</div>' : '');
+    if (!s.started || a.pct == null) { h += '<div class="banner"><span class="sp">' + (s.started ? 'Sin avance registrado todavía.' : 'Aún no inicia: el avance empezará a medirse con el primer reporte.') + '</span>' + (s.started ? '<button class="btn" data-av="' + s.p.id + '">Registrar avance</button>' : '') + '</div></div>'; return; }
+    var d = diff(a.at, TODAY), stale = d > 7 && !s.closed;
+    h += '<div class="row" style="margin-bottom:8px"><span class="pill ' + (stale ? 'warn' : 'ok') + '">Actualizado hace ' + d + ' ' + (d === 1 ? 'día' : 'días') + '</span><span class="sm muted">Avance total ' + P(a.pct) + '</span><span class="sp"></span><button class="btn" data-av="' + s.p.id + '">' + (stale ? 'Actualizar avance' : 'Ver en Avance') + '</button></div>';
+    h += '<div class="hb">' + a.phases.map(function (f) { var pc = a.ph[f.id] || 0; return '<div class="r"><span>' + E(f.name) + ' <span class="muted">· ' + N(s.p.refH * f.w / 100) + ' h</span></span><span class="trk"><span class="f" style="width:' + pc + '%;' + (pc === 100 ? 'background:var(--rest)' : '') + '"></span></span><b>' + pc + ' %</b></div>'; }).join('') + '</div></div>';
+  });
+  return h + '</section>';
+}
+function consumoCard(u, m) {
+  if (m.avance == null || m.noData) return '';
+  var hp = m.hE / m.hQ * 100, cp = m.cE / m.cQ * 100, av = m.avance, over = Math.max(hp, cp) - av;
+  var msg = over > 10 ? 'Se consumió más de lo avanzado: horas al ' + P(hp) + ' y costo al ' + P(cp) + ' con avance de ' + P(av) + '.' : 'El consumo va acorde con el avance.';
+  function bar(l, v, sim) { return '<div class="cmp"><span>' + l + (sim ? ' ' + simTag() : '') + '</span><span class="trk"><span class="f ' + (v - av > 10 ? 'over' : '') + '" style="width:' + Math.min(100, v) + '%"></span><span class="mk" style="left:' + Math.min(100, av) + '%" title="Avance"></span></span><b>' + P(v) + '</b></div>'; }
+  return '<section class="card"><div class="cardh"><h3>Avance vs consumo</h3><span class="sm muted">La marca vertical es el avance logrado</span></div><div class="hb">' + bar('Avance', av) .replace('class="f ', 'class="f q ') + bar('Horas consumidas', hp) + (S.errOdoo ? '' : bar('Costo consumido', cp, 1)) + '</div><div class="al ' + (over > 10 ? 'err' : 'ok') + '" style="margin-top:12px"><span class="t">' + msg + '</span></div></section>';
+}
+function waterfall(m) {
+  if (S.errOdoo || m.fE <= 0) return '<section class="card" id="wf"><div class="cardh"><h3>Puente de utilidad</h3>' + simTag() + '</div><div class="state"><h3>' + (S.errOdoo ? 'Odoo no disponible' : 'Aún no hay facturación') + '</h3><p>' + (S.errOdoo ? 'Sin costos ni facturación no se puede calcular la utilidad.' : 'La utilidad se calcula cuando se emite la primera factura.') + '</p></div></section>';
+  var steps = [['Facturado', m.fE, 'pos']], c = m.cat;
+  ['Ingeniería', 'Viáticos', 'Otros'].forEach(function (k) { if (c[k].e > 0) steps.push([k, -c[k].e, 'neg']); });
+  var util = m.fE - m.cE, metaV = m.fE * m.uExp / 100; steps.push(['Utilidad', util, util >= 0 ? 'ut' : 'neg']);
+  var W = 640, Hh = 250, pr = 96, pl = 8, pt = 24, pb = 52, ph = Hh - pt - pb, mx = Math.max(m.fE, metaV) * 1.05, lo = Math.min(0, util, m.fE - m.cE) * 1.1, bw = Math.min(70, (W - pl - pr) / steps.length - 14), run = 0, svg = '';
+  function y(v) { return pt + ph - (v - lo) / (mx - lo) * ph; }
+  steps.forEach(function (s, i) {
+    var x = pl + i * ((W - pl - pr) / steps.length) + ((W - pl - pr) / steps.length - bw) / 2, v = s[1], top, bot;
+    if (s[2] === 'pos') { top = v; bot = 0; run = v; } else if (s[2] === 'neg' && s[0] !== 'Utilidad') { top = run; bot = run + v; run = bot; } else { top = Math.max(0, v); bot = Math.min(0, v); }
+    var cls = { pos: 'var(--exec)', neg: 'var(--over)', ut: 'var(--rest)' }[s[2]];
+    svg += '<rect x="' + x + '" y="' + y(top) + '" width="' + bw + '" height="' + Math.max(2, y(bot) - y(top)) + '" style="fill:' + cls + '"/>';
+    svg += '<text x="' + (x + bw / 2) + '" y="' + (y(top) - 6) + '" text-anchor="middle" font-size="11" font-weight="600" class="halo">' + M(v) + '</text>';
+    svg += '<text x="' + (x + bw / 2) + '" y="' + (Hh - 10) + '" text-anchor="middle" font-size="11" style="fill:var(--muted)">' + s[0] + '</text>';
+  });
+  var ym = y(metaV);
+  svg = '<line x1="' + pl + '" x2="' + (W - pr + 6) + '" y1="' + ym + '" y2="' + ym + '" stroke-dasharray="5 4" style="stroke:var(--ink);stroke-width:1.5"/><text x="' + (W - 2) + '" y="' + (ym - 4) + '" text-anchor="end" font-size="10" style="fill:var(--muted)">Esperada ' + P(m.uExp) + '</text><text x="' + (W - 2) + '" y="' + (ym + 10) + '" text-anchor="end" font-size="10" style="fill:var(--muted)">' + M(metaV) + '</text>' + svg;
+  var gap = util - metaV;
+  var h = '<section class="card" id="wf"><div class="cardh"><h3>Puente de utilidad</h3>' + simTag() + '<span class="sp"></span><span class="pill ' + (gap >= 0 ? 'ok' : 'err') + '">' + (gap >= 0 ? 'Sobre lo esperado ' : 'Brecha vs esperada ') + M(Math.abs(gap)) + '</span></div>';
+  h += '<svg viewBox="0 0 ' + W + ' ' + Hh + '" width="100%" role="img" aria-label="Puente de facturación a utilidad">' + svg + '</svg>';
+  h += '<details class="alt"><summary>Ver como tabla</summary><div class="tbl"><table><thead><tr><th>Concepto</th><th class="n">Valor COP</th></tr></thead><tbody>' + steps.map(function (s) { return '<tr><td>' + s[0] + '</td><td class="n">' + COP(s[1]) + '</td></tr>'; }).join('') + '<tr class="tot"><td>Utilidad ' + P(util / m.fE * 100) + '</td><td class="n">' + COP(util) + '</td></tr></tbody></table></div></details></section>';
+  return h;
+}
+function alertsFor(u, m, K) {
+  var A = [];
+  m.list.forEach(function (s) {
+    if (s.av && s.started && s.av.pct == null) A.push(['warn', 'Sin avance registrado en ' + s.p.name + '.', ['Registrar avance', 'av:' + s.p.id]]);
+    else if (s.av && s.av.at && !s.closed && diff(s.av.at, TODAY) > 7) A.push(['warn', 'El avance de ' + (m.list.length > 1 ? s.p.name : 'este proyecto') + ' no se actualiza hace ' + diff(s.av.at, TODAY) + ' días.', ['Actualizar avance', 'av:' + s.p.id]]);
+    if (s.sinFactCeco) A.push(['warn', 'El CECO ' + s.sinFactCeco + ' no tiene facturación.', ['Ver facturación', 'go:' + u.id + '|facturacion']]);
+  });
+  var ad = avDesvio(m); if (ad != null && ad > 10) A.push(['err', 'El consumo supera al avance en ' + nf1.format(ad) + ' pp. Revisa antes de que el costo se desborde.', ['Ver horas', 'go:' + u.id + '|horas']]);
+  if (!S.errOdoo) {
+    if (K.costo.st === 'err') A.push(['err', 'Costo por encima de lo esperado: ' + K.costo.causa + '.', ['Ver costos', 'go:' + u.id + '|costos']]);
+    if (K.fact.st === 'err' || K.fact.st === 'warn') A.push([K.fact.st, K.fact.causa + '.', ['Ver facturación', 'go:' + u.id + '|facturacion']]);
+    if (K.util.st === 'err') A.push(['err', 'Utilidad ' + K.util.disp + ' por debajo de la esperada (' + P(m.uExp) + ').', ['Ver puente', 'wf:1']]);
+  }
+  if (K.horas.st === 'err') A.push(['err', K.horas.causa + '.', ['Ver horas', 'go:' + u.id + '|horas']]);
+  m.list.forEach(function (s) { if (s.started && !s.closed && s.p.end >= TODAY && diff(TODAY, s.p.end) <= 21 && s.av && s.av.pct != null && s.av.pct < 90) A.push(['warn', s.p.name + ' cierra en ' + diff(TODAY, s.p.end) + ' días con ' + P(s.av.pct) + ' de avance.', ['Ver en Avance', 'av:' + s.p.id]]); });
+  return A;
+}
+function alertsCard(u, m, K) {
+  var A = alertsFor(u, m, K);
+  return '<section class="card"><div class="cardh"><h3>Alertas</h3><span class="pill ' + (A.length ? 'warn' : 'ok') + '">' + A.length + '</span></div><div class="alerts">' + (A.length ? A.map(function (a) { return '<div class="al ' + a[0] + '"><span class="t">' + E(a[1]) + '</span><button class="btn" data-act="' + a[2][1] + '">' + a[2][0] + '</button></div>'; }).join('') : '<div class="al ok"><span class="t">Sin alertas: todo dentro de rango.</span></div>') + '</div></section>';
+}
+function getCm(id) { try { return (JSON.parse(localStorage.getItem('kairos-analitica-comentarios') || '{}'))[id] || []; } catch (e) { return []; } }
+function addCm(id, t) { try { var o = JSON.parse(localStorage.getItem('kairos-analitica-comentarios') || '{}'); (o[id] = o[id] || []).unshift({ by: UNAME || 'Usuario', at: TODAY, t: t }); localStorage.setItem('kairos-analitica-comentarios', JSON.stringify(o)); } catch (e) { toast('No se pudo guardar el comentario.'); } }
+function comentarios(u) {
+  var L = getCm(u.id);
+  return '<section class="card"><div class="cardh"><h3>Comentarios y lecciones aprendidas</h3></div><div class="cm">' + (L.length ? L.map(function (c) { return '<div class="c"><div class="sm muted">' + E(c.by) + ' · ' + dshort(c.at) + '</div>' + E(c.t) + '</div>'; }).join('') : '<p class="muted sm">Aún no hay comentarios.</p>') + '<label class="sr" for="cmt">Nuevo comentario</label><textarea id="cmt" placeholder="¿Qué aprendimos o qué debe saber el siguiente líder?"></textarea><div><button class="btn pri" data-cm="' + u.id + '">Agregar comentario</button></div></div></section>';
+}
+/* ---------- Nivel 3: detalle por KPI ---------- */
+function range() {
+  var p = S.per, pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  if (p.mode === 'anio') return [p.y + '-01-01', p.y + '-12-31'];
+  if (p.mode === 'mes') return [p.y + '-' + pad(p.m) + '-01', p.y + '-' + pad(p.m) + '-31'];
+  if (p.mode === 'semana') { var w = p.w || mon(TODAY); return [w, addD(w, 6)]; }
+  return null;
+}
+function bucket(d) { var m = S.per.mode; return m === 'semana' ? d : m === 'mes' ? mon(d) : d.slice(0, 7); }
+function blabel(k) { return k.length === 7 ? mlabel(k) : dshort(k); }
+function groupSum(rows, kf, vf) { var o = {}, ord = []; rows.forEach(function (r) { var k = kf(r); if (!(k in o)) { o[k] = 0; ord.push(k); } o[k] += vf(r); }); return ord.map(function (k) { return { l: k, v: o[k] }; }); }
+function timeSeries(rows, vf) {
+  var s = groupSum(rows, function (r) { return bucket(r.d); }, vf).sort(function (a, b) { return a.l < b.l ? -1 : 1; });
+  if (s.length && s[0].l.length === 7) { var by = {}; s.forEach(function (x) { by[x.l] = x.v; }); var out = [], k = s[0].l, last = s[s.length - 1].l; while (k <= last) { out.push({ l: k, v: by[k] || 0 }); var y = +k.slice(0, 4), mm = +k.slice(5, 7) + 1; if (mm > 12) { mm = 1; y++; } k = y + '-' + (mm < 10 ? '0' : '') + mm; } s = out; }
+  if (S.cum) { var t = 0; s = s.map(function (x) { t += x.v; return { l: x.l, v: t }; }); }
+  return s.map(function (x) { return { l: blabel(x.l), v: x.v }; });
+}
+function colChart(items, fmt, qline, label) {
+  if (!items.length) return '<div class="state"><p>No hay registros en este periodo.</p></div>';
+  var W = 640, Hh = 230, pl = 8, pt = 22, pb = 36, ph = Hh - pt - pb, mx = Math.max.apply(null, items.map(function (i) { return i.v; }).concat([qline || 0])) * 1.1 || 1, bw = Math.min(46, (W - 2 * pl) / items.length - 6), svg = '', step = Math.ceil(items.length / 12);
+  items.forEach(function (it, i) {
+    var cw = (W - 2 * pl) / items.length, x = pl + i * cw + (cw - bw) / 2, hh = it.v / mx * ph;
+    svg += '<rect x="' + x + '" y="' + (pt + ph - hh) + '" width="' + bw + '" height="' + Math.max(1, hh) + '" style="fill:var(--exec)"/>';
+    if (items.length <= 14) svg += '<text x="' + (x + bw / 2) + '" y="' + (pt + ph - hh - 5) + '" text-anchor="middle" font-size="10">' + fmt(it.v) + '</text>';
+    if (i % step === 0) svg += '<text x="' + (x + bw / 2) + '" y="' + (Hh - 14) + '" text-anchor="middle" font-size="10" style="fill:var(--muted)">' + E(it.l) + '</text>';
+  });
+  if (qline) { var yq = pt + ph - qline / mx * ph; svg += '<line x1="' + pl + '" x2="' + (W - pl) + '" y1="' + yq + '" y2="' + yq + '" stroke-dasharray="5 4" style="stroke:var(--quot);stroke-width:2"/><text x="' + (W - pl) + '" y="' + (yq - 5) + '" text-anchor="end" font-size="10" style="fill:var(--muted)">Cotizado ' + fmt(qline) + '</text>'; }
+  return '<svg viewBox="0 0 ' + W + ' ' + Hh + '" width="100%" role="img" aria-label="' + E(label) + '">' + svg + '</svg><details class="alt"><summary>Ver como tabla</summary><div class="tbl"><table><thead><tr><th>Periodo</th><th class="n">Valor</th></tr></thead><tbody>' + items.map(function (i) { return '<tr><td>' + E(i.l) + '</td><td class="n">' + fmt(i.v) + '</td></tr>'; }).join('') + '</tbody></table></div></details>';
+}
+function cmpBars(rows, fmt) {
+  var mx = Math.max.apply(null, rows.map(function (r) { return Math.max(r.e, r.q || 0); }).concat([1]));
+  return '<div class="leg"><span><i style="background:var(--exec)"></i>Ejecutado</span><span><i style="background:var(--quot)"></i>Cotizado</span><span><i style="background:var(--over)"></i>Sobreejecución</span></div><div class="hb" style="margin-top:10px">' + rows.map(function (r) {
+    var over = r.q != null && r.e > r.q * (r.k || 1) + .5;
+    return '<div class="r"><span>' + E(r.l) + '</span><span class="trk">' + (r.q != null ? '<span class="f q" style="width:' + r.q / mx * 100 + '%"></span>' : '') + '<span class="f ' + (over ? 'over' : '') + '" style="width:' + r.e / mx * 100 * (r.q != null ? 1 : 1) + '%;' + (r.q != null ? 'height:6px;top:4px;bottom:auto' : '') + '"></span></span><b>' + fmt(r.e) + (r.q != null ? ' <span class="muted">/ ' + fmt(r.q) + '</span>' : '') + '</b></div>';
+  }).join('') + '</div>';
+}
+function seg(attr, opts, cur) { return '<div class="seg" role="group">' + opts.map(function (o) { return '<button ' + attr + '="' + o[0] + '" aria-pressed="' + (o[0] === cur) + '">' + o[1] + '</button>'; }).join('') + '</div>'; }
+function limited(rows, key, cols, render) {
+  var lim = S.more[key] ? rows.length : 20, h = '<div class="tbl"><table><thead><tr>' + cols.map(function (c) { return '<th class="' + (c[1] || '') + '">' + c[0] + '</th>'; }).join('') + '</tr></thead><tbody>' + rows.slice(0, lim).map(render).join('') + '</tbody></table></div>';
+  if (rows.length > lim) h += '<button class="btn" style="margin-top:8px" data-more="' + key + '">Mostrar las ' + rows.length + ' filas</button>';
+  return h;
+}
+function detalleView(u, kpi) {
+  var e = u, c0 = calc(e), list = e.sims, rg = range(), m = metrics(list, rg), multi = list.length > 1;
+  var title = { horas: 'Horas', costos: 'Costos', facturacion: 'Facturación' }[kpi], simk = kpi !== 'horas';
+  var crumb = '<button data-go="cartera">Proyectos y Servicios</button><span>›</span><button data-go="' + e.id + '">' + E(e.name) + '</button><span>›</span><span>' + title + '</span>';
+  var h = EMB ? '<div class="crumb"><button data-go="' + e.id + '">‹ Volver al resumen de analítica</button></div>' : '<div class="crumb">' + crumb + '</div><h1 class="ttl">' + title + ' · ' + E(e.name) + '</h1>';
+  h += '<div class="tabs" role="tablist">' + [['horas', 'Horas'], ['costos', 'Costos'], ['facturacion', 'Facturación']].map(function (t) { return '<button role="tab" aria-selected="' + (t[0] === kpi) + '" data-go="' + e.id + '|' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
+  var ys = [2025, 2026], ws = []; for (var i = 0; i < 10; i++) ws.push(addD(mon(TODAY), -7 * i));
+  h += '<div class="filters">' + seg('data-per', [['todo', 'Todo'], ['anio', 'Año'], ['mes', 'Mes'], ['semana', 'Semana']], S.per.mode);
+  if (S.per.mode === 'anio' || S.per.mode === 'mes') h += '<label class="sr" for="py">Año</label><select id="py" data-pv="y">' + selOpts(ys.map(function (y) { return [String(y), String(y)]; }), String(S.per.y)) + '</select>';
+  if (S.per.mode === 'mes') h += '<label class="sr" for="pm">Mes</label><select id="pm" data-pv="m">' + selOpts(MES.map(function (n, i) { return [String(i + 1), n.charAt(0).toUpperCase() + n.slice(1)]; }), String(S.per.m)) + '</select>';
+  if (S.per.mode === 'semana') h += '<label class="sr" for="pw">Semana</label><select id="pw" data-pv="w">' + selOpts(ws.map(function (w) { return [w, 'Semana del ' + dshort(w)]; }), S.per.w || ws[0]) + '</select>';
+  h += '<label class="tg"><input type="checkbox" data-cum="1"' + (S.cum ? ' checked' : '') + '><i></i>Ver acumulado</label><span class="sp"></span>' + (simk ? simTag() : '') + '</div>';
+  if (simk && S.errOdoo) return h + bannerOdoo() + '<div class="card state"><h3>' + title + ' no disponible</h3><p>Odoo no respondió. Las horas y el avance siguen disponibles.</p></div>';
+  var body = kpi === 'horas' ? detHoras(e, m, rg) : kpi === 'costos' ? detCostos(e, m, rg) : detFact(e, m, rg);
+  return h + body;
+}
+function detHoras(e, m, rg) {
+  var hrs = []; m.list.forEach(function (s) { s.hours.forEach(function (r) { if (inR(r.d, rg)) hrs.push(r); }); });
+  var hasPh = m.list.some(function (s) { return s.av; }), cut = S.cut.horas || (hasPh ? 'fase' : 'colab'); if (cut === 'fase' && !hasPh) cut = 'colab';
+  var opts = (hasPh ? [['fase', 'Por fase']] : []).concat([['perfil', 'Por perfil'], ['colab', 'Por colaborador'], ['fecha', 'Por fecha']]);
+  var kp = kpis(m), K = kp.horas, h = '<div class="kpis"><div class="kpi ' + (K ? K.st : 'off') + '"><span class="eyebrow">Horas ejecutadas' + (S.per.mode !== 'todo' ? ' en el periodo' : '') + '</span><div class="v">' + N(m.hE) + ' h</div><div class="sm muted">Cotizadas: ' + N(m.hQ) + ' h</div>' + (S.per.mode === 'todo' && K && K.causa ? '<p class="causa">' + E(K.causa) + '</p>' : '') + '</div></div>';
+  h += '<section class="card"><div class="cardh"><h3>Dónde se fueron las horas</h3><span class="sp"></span>' + seg('data-cut', opts, cut) + '</div>';
+  var fmt = function (v) { return N(v) + ' h'; };
+  if (cut === 'fase') { var rows = phaseRows(m); if (rg) rows.forEach(function (r) { r.e = sum(hrs.filter(function (x) { return x.phase && r.name.indexOf(x.phase) >= 0; }), function (x) { return x.h; }); }); h += cmpBars(rows.map(function (r) { return { l: r.name, e: r.e, q: r.q, k: r.pc >= 100 ? 1 : 1.0 }; }), fmt); h += '<p class="sm muted" style="margin-top:8px">Rojo = la fase ya superó las horas cotizadas.</p>'; }
+  else if (cut === 'perfil' || cut === 'colab') { var g = groupSum(hrs, function (r) { return cut === 'perfil' ? r.perfil : r.person; }, function (r) { return r.h; }).sort(function (a, b) { return b.v - a.v; }); h += cmpBars(g.map(function (x) { return { l: x.l, e: x.v }; }), fmt); }
+  else h += colChart(timeSeries(hrs, function (r) { return r.h; }), fmt, S.cum && S.per.mode === 'todo' ? m.hQ : 0, 'Horas por fecha');
+  h += '</section>';
+  var people = groupSum(hrs, function (r) { return r.person; }, function (r) { return r.h; }).sort(function (a, b) { return b.v - a.v; }).map(function (x) { return x.l; }), show = people.slice(0, 6);
+  var phs = {}; hrs.forEach(function (r) { var k = r.phase || 'Servicio'; (phs[k] = phs[k] || {})[r.person] = ((phs[k] || {})[r.person] || 0) + r.h; });
+  var keys = Object.keys(phs), tot = {}; h += '<section class="card"><div class="cardh"><h3>Horas por ' + (hasPh ? 'fase y ' : '') + 'colaborador</h3></div><div class="tbl"><table><thead><tr><th>' + (hasPh ? 'Fase' : 'Concepto') + '</th>' + show.map(function (p) { return '<th class="n">' + E(p.split(' ')[0] + ' ' + (p.split(' ')[1] || '').charAt(0) + '.') + '</th>'; }).join('') + (people.length > 6 ? '<th class="n">Otros</th>' : '') + '<th class="n">Total</th></tr></thead><tbody>';
+  keys.forEach(function (k) { var row = phs[k], t = 0, o = 0; h += '<tr><td>' + E(k) + '</td>' + show.map(function (p) { var v = row[p] || 0; t += v; tot[p] = (tot[p] || 0) + v; return '<td class="n">' + (v ? N(v) : '·') + '</td>'; }).join(''); Object.keys(row).forEach(function (p) { if (show.indexOf(p) < 0) o += row[p]; }); t += o; tot.o = (tot.o || 0) + o; tot.t = (tot.t || 0) + t; h += (people.length > 6 ? '<td class="n">' + (o ? N(o) : '·') + '</td>' : '') + '<td class="n b">' + N(t) + '</td></tr>'; });
+  h += '<tr class="tot"><td>Total</td>' + show.map(function (p) { return '<td class="n">' + N(tot[p] || 0) + '</td>'; }).join('') + (people.length > 6 ? '<td class="n">' + N(tot.o || 0) + '</td>' : '') + '<td class="n">' + N(tot.t || 0) + '</td></tr></tbody></table></div></section>';
+  return h;
+}
+function detCostos(e, m, rg) {
+  var rows = []; m.list.forEach(function (s) { s.costs.forEach(function (r) { if (inR(r.d, rg)) rows.push({ r: r, s: s }); }); });
+  var cut = S.cut.costos || 'cat', multi = m.list.length > 1, plan = m.plan;
+  var K = kpis(metrics(m.list)).costo, h = '<div class="kpis"><div class="kpi ' + (K.st) + ' simc"><div class="row"><span class="eyebrow">Costo ejecutado' + (S.per.mode !== 'todo' ? ' en el periodo' : '') + '</span><span class="sp"></span>' + simTag() + '</div><div class="v">' + M(m.cE) + '</div><div class="sm muted">Cotizado: ' + M(m.cQ) + '</div>' + (S.per.mode === 'todo' && K.causa ? '<p class="causa">' + E(K.causa) + '</p>' : '') + '</div></div>';
+  h += '<section class="card"><div class="cardh"><h3>Costos</h3><span class="sp"></span>' + seg('data-cut', [['cat', 'Por categoría'], ['fecha', 'Por fecha']], cut) + '</div>';
+  if (cut === 'cat') { h += cmpBars(['Ingeniería', 'Viáticos', 'Otros'].map(function (c) { var q = m.cat[c].q; return { l: c, e: m.cat[c].e, q: S.per.mode === 'todo' ? q : null, k: 1 }; }), M); h += '<p class="sm muted" style="margin-top:8px">«Otros» no se cotiza: cualquier valor ahí es sobrecosto.</p>'; }
+  else h += colChart(timeSeries(rows.map(function (x) { return x.r; }), function (r) { return r.v; }), M, S.cum && S.per.mode === 'todo' ? m.cQ : 0, 'Costos por fecha');
+  h += '</section><section class="card"><div class="cardh"><h3>Costos emitidos</h3>' + simTag() + '</div>';
+  var srt = rows.slice().sort(function (a, b) { return a.r.d < b.r.d ? 1 : -1; });
+  h += limited(srt, 'cost', [['Fecha'], multi ? ['Proyecto'] : ['CECO'], ['Categoría'], ['Subcategoría'], ['Valor', 'n'], ['Notas']], function (x) { var r = x.r; return '<tr><td>' + dshort(r.d) + '</td><td>' + E(multi ? x.s.p.name.slice(0, 26) : (x.s.cecos.filter(function (c) { return c.id === r.ceco; })[0] || x.s.cecos[0]).code) + '</td><td>' + r.cat + '</td><td>' + E(r.sub) + '</td><td class="n ' + (r.cat === 'Otros' ? 'red' : '') + '">' + COP(r.v) + '</td><td>' + E(r.note) + '</td></tr>'; });
+  return h + '</section>';
+}
+function detFact(e, m, rg) {
+  var rows = []; m.list.forEach(function (s) { s.inv.forEach(function (r) { if (inR(r.d, rg)) rows.push({ r: r, s: s }); }); });
+  var cut = S.cut.fact || 'cat', multi = m.list.length > 1, K = kpis(metrics(m.list)).fact, venc = rows.filter(function (x) { return x.r.est === 'Vencida'; }).length;
+  var h = '<div class="kpis"><div class="kpi ' + K.st + ' simc"><div class="row"><span class="eyebrow">Facturado' + (S.per.mode !== 'todo' ? ' en el periodo' : '') + '</span><span class="sp"></span>' + simTag() + '</div><div class="v">' + M(m.fE) + '</div><div class="sm muted">Cotizado: ' + M(m.fQ) + (S.per.mode === 'todo' ? ' · ' + P(m.fE / m.fQ * 100) : '') + '</div>' + (venc ? '<p class="causa">' + venc + ' factura vencida</p>' : '') + '</div></div>';
+  h += '<section class="card"><div class="cardh"><h3>Facturación</h3><span class="sp"></span>' + seg('data-cut', [['cat', 'Por categoría'], ['fecha', 'Por fecha']], cut) + '</div>';
+  if (cut === 'cat') { var g = groupSum(rows.map(function (x) { return x.r; }), function (r) { return r.cat; }, function (r) { return r.cop; }); h += g.length ? cmpBars(g.map(function (x) { return { l: x.l, e: x.v }; }), M) : '<div class="state"><p>No hay facturas en este periodo.</p></div>'; }
+  else h += colChart(timeSeries(rows.map(function (x) { return x.r; }), function (r) { return r.cop; }), M, S.cum && S.per.mode === 'todo' ? m.fQ : 0, 'Facturación por fecha');
+  h += '</section><section class="card"><div class="cardh"><h3>Facturas emitidas</h3>' + simTag() + '</div>';
+  if (!rows.length) return h + '<div class="state"><h3>Sin facturas</h3><p>No hay facturas emitidas en este periodo.</p></div></section>';
+  var srt = rows.slice().sort(function (a, b) { return a.r.d < b.r.d ? 1 : -1; });
+  h += limited(srt, 'inv', [['Factura'], ['Estado'], multi ? ['Proyecto'] : ['CECO'], ['Valor COP', 'n'], ['Valor USD', 'n'], ['Categoría'], ['Emisión'], ['Pago'], ['Notas']], function (x) { var r = x.r; return '<tr><td>' + r.no + '</td><td><span class="pill ' + (r.est === 'Pagada' ? 'ok' : r.est === 'Vencida' ? 'err' : 'warn') + '">' + r.est + '</span></td><td>' + E(multi ? x.s.p.name.slice(0, 26) : (x.s.cecos.filter(function (c) { return c.id === r.ceco; })[0] || x.s.cecos[0]).code) + '</td><td class="n">' + COP(r.cop) + '</td><td class="n">US$ ' + N(r.usd) + '</td><td>' + r.cat + '</td><td>' + dshort(r.d) + '</td><td>' + (r.paid ? dshort(r.paid) : '—') + '</td><td>' + E(r.note) + '</td></tr>'; });
+  return h + '</section>';
+}
+/* ---------- router y eventos ---------- */
+var lastKey = '', TOP = ['general', 'cartera', 'regionales', 'ocupacion', 'negocio', 'forecast', 'rentcot'];
+/* ---------- Por regional: segmentacion y agrupacion [ACORDADO 31-oct, boceto 8] ----------
+   Datos compartidos del shell (KairosRegional). Vendido y facturado: Odoo simulado, consolidados en la moneda del cluster. */
+var RG = { cl: null, reg: '', lid: '', cli: '', by: 'regional', open: {}, init: false };
+function PR() { try { return window.parent !== window ? window.parent : null; } catch (e) { return null; } }
+function rgInit() {
+  if (RG.init) return; RG.init = true;
+  var p = PR(), K = p && p.KairosMaestros;
+  if (K && UNAME) { var g = K.grupos(UNAME); if (g.clusters.length) RG.cl = g.clusters[0]; else if (g.regionales.length) { var r = p.OdooSim.regionales().filter(function (x) { return x.id === g.regionales[0]; })[0]; RG.cl = r ? r.cluster : null; RG.reg = g.regionales[0]; } }
+  if (!RG.cl) RG.cl = 'LATAM';
+}
+try { var rgGo = JSON.parse(localStorage.getItem('kairos-analitica-goto') || 'null'); if (rgGo && rgGo.view === 'regionales') { localStorage.removeItem('kairos-analitica-goto'); RG.init = true; RG.cl = rgGo.cl || 'LATAM'; RG.reg = rgGo.reg || ''; if (location.hash !== '#regionales') location.hash = '#regionales'; }
+  else if (rgGo && TOP.indexOf(rgGo.view) >= 0) { localStorage.removeItem('kairos-analitica-goto'); if (location.hash !== '#' + rgGo.view) location.hash = '#' + rgGo.view; } } catch (e) {}
+function regionalesView() {
+  rgInit();
+  var p = PR(), R = p && p.KairosRegional;
+  var head = headHTML('Analítica', 'Por cluster, regional, líder y cliente · acumulado al ' + dshort(TODAY)) + navTabs('regionales');
+  if (!R) return head + stateBox('Abre Analítica dentro de Kairos', 'Esta vista usa los datos compartidos del ecosistema.');
+  var cur = RG.cl ? R.moneda(RG.cl) : 'USD', all = R.alcance(R.filas(cur), UNAME, ROLE);
+  var base = all.filter(function (r) { return !RG.cl || r.cluster === RG.cl; });
+  var regs = {}, lids = {}, clis = {}; base.forEach(function (r) { regs[r.regional] = 1; lids[r.leader] = 1; clis[r.cliente] = 1; });
+  var rows = base.filter(function (r) { return (!RG.reg || r.regional === RG.reg) && (!RG.lid || r.leader === RG.lid) && (!RG.cli || r.cliente === RG.cli); });
+  var keys = function (o) { return Object.keys(o).sort(function (a, b) { return a.localeCompare(b, 'es'); }).map(function (k) { return [k, k]; }); };
+  var h = head + '<div class="filters" role="group" aria-label="Segmentación">' +
+    '<select data-rg="cl" aria-label="Cluster"><option value="">Todos los clusters (USD)</option>' + selOpts([['LATAM', 'LATAM'], ['NA', 'North America']], RG.cl || '') + '</select>' +
+    '<select data-rg="reg" aria-label="Regional"><option value="">Todas las regionales</option>' + selOpts(keys(regs), RG.reg) + '</select>' +
+    '<select data-rg="lid" aria-label="Líder"><option value="">Todos los líderes</option>' + selOpts(keys(lids), RG.lid) + '</select>' +
+    '<select data-rg="cli" aria-label="Cliente"><option value="">Todos los clientes</option>' + selOpts(keys(clis), RG.cli) + '</select>' +
+    (KT ? KT.clearBtn(!!RG.reg + !!RG.lid + !!RG.cli, ' data-fclr="rg"') : '') +
+    '<span class="sp"></span><span class="sm muted">Agrupar por</span><div class="seg" role="group" aria-label="Agrupar por">' +
+    [['regional', 'Regional'], ['leader', 'Líder'], ['cliente', 'Cliente']].map(function (o) { return '<button data-rgby="' + o[0] + '" aria-pressed="' + (RG.by === o[0]) + '">' + o[1] + '</button>'; }).join('') + '</div></div>';
+  var s = R.resumen(rows), fm = function (v) { return R.fmt(v, cur); };
+  var occTxt = function (o) { return o ? o.pct + ' %' : '—'; }, occTip = function (o) { return o ? o.horas + ' h reservadas esta semana en estos CECO / capacidad de ' + o.personas + ' personas de sus equipos' : 'Sin reservas para calcular'; };
+  h += '<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">' +
+    rgK('CECO activos', s.n, s.nLeaders + (s.nLeaders === 1 ? ' líder' : ' líderes')) + rgK('Vendido', fm(s.sold), cur + ' · TRM de hoy') + rgK('Facturado', fm(s.inv), s.pct + ' % de lo vendido') +
+    rgK('Por facturar', fm(s.pend), 'Vendido menos facturado') + rgK('Alertas', s.critical + s.important, s.critical + ' críticas · ' + s.important + ' importantes') + rgK('Ocupación', occTxt(s.occ), occTip(s.occ)) + '</div>';
+  if (!rows.length) return h + stateBox('Sin CECO para estos filtros', 'Cambia el cluster, la regional, el líder o el cliente.');
+  var sub = RG.by === 'leader' ? 'cliente' : 'leader', G = R.agrupar(rows, RG.by);
+  var cols = 'grid-template-columns:minmax(200px,2fr) 70px repeat(2,minmax(100px,1fr)) minmax(140px,1.4fr) minmax(100px,1fr) 110px 90px';
+  var line = function (lbl, x, cls, attrs, pad) {
+    var al = x.critical ? '<span class="pill err">' + x.critical + ' crít.</span>' : x.important ? '<span class="pill warn">' + x.important + ' imp.</span>' : '<span class="muted">—</span>';
+    return '<div class="grid ' + (cls || '') + '" style="' + cols + ';align-items:center;padding:10px 16px' + (pad ? ';padding-left:' + pad + 'px' : '') + '"' + (attrs || '') + '>' + lbl + '<span class="n">' + x.n + '</span><span class="n">' + fm(x.sold) + '</span><span class="n">' + fm(x.inv) + '</span>' +
+      '<span style="display:flex;align-items:center;gap:8px"><span style="flex:1;height:6px;border-radius:3px;background:var(--line-2)"><span style="display:block;height:6px;border-radius:3px;width:' + Math.min(100, x.pct) + '%;background:var(--primary)"></span></span>' + x.pct + ' %</span>' +
+      '<span class="n">' + fm(x.pend) + '</span><span>' + al + '</span><span class="n" title="' + E(occTip(x.occ)) + '">' + occTxt(x.occ) + '</span></div>';
+  };
+  var resp = p.KairosMaestros.vigentes().regional, lbl = { regional: 'Regional', leader: 'Líder', cliente: 'Cliente' };
+  h += '<section class="card flush" aria-label="Agrupado por ' + lbl[RG.by] + '"><div class="tbl"><div style="min-width:980px"><div class="grid hd" style="' + cols + ';padding:10px 16px"><span>' + lbl[RG.by] + '</span><span class="n">CECO</span><span class="n">Vendido</span><span class="n">Facturado</span><span>Avance de facturación</span><span class="n">Por facturar</span><span>Alertas</span><span class="n">Ocupación</span></div>';
+  G.forEach(function (g) {
+    var k1 = RG.by + ':' + g.key, o1 = !!RG.open[k1];
+    var name = '<span><button class="lnk" data-rgopen="' + E(k1) + '" aria-expanded="' + o1 + '">' + (o1 ? '▾ ' : '▸ ') + '<b>' + E(g.key) + '</b></button>' + (RG.by === 'regional' ? '<br><small class="muted">' + E(resp[g.key] || 'Sin responsable') + '</small>' : '') + '</span>';
+    h += line(name, g.s, 'rw');
+    if (!o1) return;
+    R.agrupar(g.rows, sub).forEach(function (s2) {
+      var k2 = k1 + '>' + s2.key, o2 = !!RG.open[k2];
+      h += line('<span><button class="lnk" data-rgopen="' + E(k2) + '" aria-expanded="' + o2 + '">' + (o2 ? '▾ ' : '▸ ') + E(s2.key) + '</button></span>', s2.s, 'rw rgsub', '', 36);
+      if (!o2) return;
+      s2.rows.forEach(function (r) { h += line('<span><span class="mono">' + E(r.code) + '</span> ' + E(r.name) + '<br><small class="muted">' + E(r.cliente) + ' · ' + E(r.currency) + '</small></span>', R.resumen([r]), 'rw rgsub', '', 56); });
+    });
+  });
+  h += '</div></div><div class="cardf"><span>Vendido con la TRM de hoy y facturado con la TRM de cada factura, consolidados en ' + cur + '. Ocupación: horas reservadas esta semana en esos CECO sobre la capacidad de las personas de sus equipos.</span>' + simTag() + '</div></section>';
+  return h;
+  function rgK(l, v, c) { return '<div class="kpi"><span class="sm muted">' + l + '</span><span class="v" style="font-size:24px">' + v + '</span><span class="causa">' + E(c) + '</span></div>'; }
+}
+document.addEventListener('change', function (ev) { var d = ev.target.dataset || {}; if (!d.rg) return; RG[d.rg] = ev.target.value || (d.rg === 'cl' ? null : ''); if (d.rg === 'cl') { RG.reg = ''; RG.lid = ''; RG.cli = ''; } RG.open = {}; render(); });
+document.addEventListener('click', function (ev) { var f = ev.target.closest('[data-fcgo]'); if (f && SH && SH.go) { SH.go('forecast'); return; } });
+document.addEventListener('click', function (ev) { var t = ev.target.closest('[data-rgby],[data-rgopen]'); if (!t) return; if (t.dataset.rgby) { RG.by = t.dataset.rgby; RG.open = {}; } else { var k = t.dataset.rgopen; RG.open[k] = !RG.open[k]; } render(); });
+/* Forecast y Backlog dentro de Analitica: los Tableros del modulo, embebidos y completos; la grilla y el cierre siguen en el modulo */
+function forecastView() {
+  var side = SH && SH.go ? '<button class="btn" data-fcgo="1">Abrir el módulo · grilla, movimientos y cierre</button>' : '';
+  var h = headHTML('Analítica', 'Forecast y Backlog · proyección de facturación por cluster, regional, líder y cliente', side) + navTabs('forecast');
+  return h + '<iframe class="fc-emb" src="forecast.html#tableros&embed" title="Forecast y Backlog · Tableros" style="display:block;width:100%;min-height:900px;border:0;background:transparent"></iframe>';
+}
+/* Rentabilidad de cotizaciones [ACORDADO 04-nov, boceto 49]: tablero de Cotizaciones embebido; el lider de cluster lo abre desde la aprobacion */
+function rentcotView() {
+  return headHTML('Analítica', 'Rentabilidad de cotizaciones · margen cotizado frente al mínimo, por cluster, unidad y regional') + navTabs('rentcot') + '<iframe class="rc-emb" src="cotizaciones.html#rent&embed" title="Rentabilidad de cotizaciones" style="display:block;width:100%;min-height:640px;border:0;background:transparent"></iframe>';
+}
+function parseHash() {
+  var h = (location.hash || '').slice(1).replace(/^embed-/, 'p-'), mm = /^p-(.+?)(?:-(horas|costos|facturacion|negocio))?$/.exec(h);
+  if (mm) { S.id = mm[1]; S.kpi = mm[2] || null; S.view = S.kpi === 'negocio' ? 'negproy' : S.kpi ? 'detalle' : 'proyecto'; }
+  else { var v = TOP.indexOf(h) >= 0 && can(h) ? h : home(); S.view = v; S.id = null; S.kpi = null; }
+}
+function navigate(id, tgt) { var h = TOP.indexOf(id) >= 0 ? '#' + id : (EMB ? '#embed-' : '#p-') + id + (tgt ? '-' + tgt : ''); if (location.hash === h) render(); else location.hash = h; }
+function skeleton() { return '<div class="head"><div><h1>Analítica</h1><p>Cargando indicadores…</p></div></div><div style="display:flex;flex-direction:column;gap:12px" aria-busy="true">' + [1, 2, 3, 4].map(function () { return '<div class="sk"></div>'; }).join('') + '</div>'; }
+function render() {
+  var key = S.view + '|' + S.id + '|' + S.kpi, y = lastKey === key ? window.scrollY : 0, h;
+  if (S.view === 'forecast' && lastKey === key && $app.querySelector('iframe.fc-emb')) return; /* no recargar los Tableros embebidos */
+  if (S.view === 'rentcot' && lastKey === key && $app.querySelector('iframe.rc-emb')) return;
+  if (!home() && !(EMB && can('cartera'))) h = stateBox('Sin permiso', 'Analítica está disponible para Dirección, Planeación, Solution Design, líderes y administración.');
+  else if (S.loading) h = skeleton();
+  else if (S.fail) h = stateBox('No se pudo cargar la analítica', 'Revisa la conexión e intenta de nuevo.') + '<div style="text-align:center"><button class="btn pri" data-reload="1">Reintentar</button></div>';
+  else {
+    try {
+      if (S.view === 'general') h = generalView();
+      else if (S.view === 'cartera') h = carteraView();
+      else if (S.view === 'regionales') h = regionalesView();
+      else if (S.view === 'ocupacion') h = ocupacionView();
+      else if (S.view === 'negocio') h = negocioView();
+      else if (S.view === 'forecast') h = forecastView();
+      else if (S.view === 'rentcot') h = rentcotView();
+      else {
+        var u = findUnit(S.units, S.id), back = '<div class="crumb"><button data-go="' + (home() || 'cartera') + '">' + ic('back') + 'Analítica</button></div>';
+        if (!u) h = back + stateBox('No encontramos este proyecto', 'Puede haber cambiado de estado o no estar en tu cartera.');
+        else if (S.view === 'negproy') h = canNeg(u) ? negocioProyView(u) : back + stateBox('Sin permiso', 'El análisis de negocio de este proyecto lo ven Solution Design, la gerencia y su líder.');
+        else h = canDetail(u) ? (S.view === 'proyecto' ? proyectoView(u) : detalleView(u, S.kpi)) : back + stateBox('Sin permiso', 'Este proyecto lo ven la gerencia, Planeación y su líder.');
+      }
+    } catch (err) { h = stateBox('Algo salió mal al armar esta vista', E(err.message)); }
+  }
+  var fresh = !S.loading && key !== lastKey;
+  $app.classList.toggle('anim', fresh);
+  $app.innerHTML = h; if (!S.loading) lastKey = key; window.scrollTo(0, y);
+  if (EMB) { try { window.parent.postMessage({ kx: 'h', h: document.documentElement.scrollHeight + 8 }, '*'); } catch (e) {} }
+}
+document.addEventListener('click', function (ev) {
+  var t = ev.target.closest('[data-go],[data-tw],[data-mine],[data-act],[data-av],[data-cm],[data-retry],[data-per],[data-cut],[data-more],[data-reload],[data-wf],[data-tipo],[data-ncut],[data-ost],[data-ow],[data-onav],[data-fclr]'); if (!t || t.disabled) return;
+  var d = t.dataset;
+  if (d.tipo) { S.tipo = d.tipo; render(); return; }
+  if (d.fclr) { if (d.fclr === 'rg') { RG.reg = RG.lid = RG.cli = ''; } else { S.tipo = 'todos'; S.fEst = 'activo'; S.fCli = ''; S.fUn = ''; } render(); return; }
+  if (d.ncut) { S.ncut = d.ncut; render(); return; }
+  if (d.ost) { S.occ.st = d.ost; render(); return; }
+  if (d.ow) { occClick(+d.ow); render(); return; }
+  if (d.onav) { var o = occData(); S.occ.from = Math.max(1, Math.min(o.cur.week - 9, S.occ.from + (+d.onav) * 5)); render(); return; }
+  if (d.wf) { ev.preventDefault(); var w = document.getElementById('wf'); if (w) w.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (d.go) { var p = d.go.split('|'); S.child = 'todos'; if (p[0] !== S.id) S.cut = {}; navigate(p[0], p[1]); window.scrollTo(0, 0); }
+  else if (d.tw) { S.open[d.tw] = !S.open[d.tw]; render(); }
+  else if (d.mine) { S.mine = d.mine === '1'; render(); }
+  else if (d.av) gotoAvance(d.av);
+  else if (d.act) { var a = d.act.split(':'); if (a[0] === 'av') gotoAvance(a[1]); else if (a[0] === 'go') { var q = a[1].split('|'); navigate(q[0], q[1]); } else { var w2 = document.getElementById('wf'); if (w2) w2.scrollIntoView({ behavior: 'smooth' }); } }
+  else if (d.cm) { var ta = document.getElementById('cmt'); if (ta && ta.value.trim()) { addCm(d.cm, ta.value.trim()); render(); } }
+  else if (d.retry) { S.errOdoo = false; render(); }
+  else if (d.per) { S.per.mode = d.per; render(); }
+  else if (d.cut) { var k = S.kpi === 'horas' ? 'horas' : S.kpi === 'costos' ? 'costos' : 'fact'; S.cut[k] = d.cut; render(); }
+  else if (d.more) { S.more[d.more] = true; render(); }
+  else if (d.reload) init();
+});
+document.addEventListener('change', function (ev) {
+  var t = ev.target, d = t.dataset;
+  if (d.f) { S[d.f] = t.value; render(); }
+  else if (d.child) { S.child = t.value; render(); }
+  else if (d.pv) { S.per[d.pv] = d.pv === 'w' ? t.value : +t.value; render(); }
+  else if (d.cum) { S.cum = t.checked; render(); }
+});
+document.addEventListener('input', function (ev) {
+  var t = ev.target; if (!t.dataset || !t.dataset.oq) return;
+  S.occ.q = t.value; render(); var el = document.getElementById('oq'); if (el) { el.focus(); var n = el.value.length; try { el.setSelectionRange(n, n); } catch (e) {} }
+});
+if (EMB) { document.body.style.paddingTop = '0'; document.body.style.background = 'transparent'; }
+window.addEventListener('hashchange', function () { parseHash(); render(); });
+function init() {
+  S.loading = true; S.fail = false; parseHash(); render();
+  setTimeout(function () {
+    try {
+      var projs = loadProjects(); SIM = {}; CACHE = {}; NEG = null; OCC = null;
+      projs.forEach(function (p) { SIM[p.id] = simulate(p); });
+      S.units = buildUnits(projs);
+      if (S.mine == null) S.mine = false;
+      S.loading = false;
+    } catch (e) { S.loading = false; S.fail = true; }
+    render();
+  }, 350);
+}
+init();
+})();
+</script>
+</body></html>

@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kairos Configuración</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap">
+<script>(function(){try{var p=window.parent;if(p!==window&&p.KAIROS_SHELL){var d=document.documentElement;d.classList.add('in-kairos');var th=p.document.documentElement.getAttribute('data-theme');if(th)d.setAttribute('data-theme',th);window.KAIROS_SHELL=p.KAIROS_SHELL;window.KAIROS_HOST=p.KAIROS_HOST;}}catch(e){}})();</script>
+<style>
+/* Layout: cabecera del modulo, pestanas por seccion y contenido de una columna; edicion de persona en hoja lateral.
+   Tokens del Ecosistema (design/planeacion-v1). */
+:root {
+  color-scheme: light;
+  --font: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  --navy: #001c3f; --bright: #0a58eb; --cyan: #00dcfa; --cyan-ink: #007f93;
+  --bg: #f2f5f9; --surface: #fff; --surface-2: #f6f8fb; --ink: #001c3f; --muted: #556578; --line: #dbe2ea; --line-2: #eef2f6;
+  --primary: #002473; --primary-ink: #fff; --primary-soft: #e8eefc; --focus: #0a58eb;
+  --ok-bg: #e5f7ee; --ok-ink: #145a37; --warn-bg: #fff4e0; --warn-ink: #7a4a00; --err-bg: #fbeaeb; --err-ink: #b0353c;
+  --approval: #7543ff; --approval-soft: #f1ecff; --off-bg: #e9edf2; --off-ink: #8593a5;
+  --admin: #001c3f; --admin-ink: #fff;
+  --shadow: 0 12px 32px rgba(0,28,63,.18); --shadow-sm: 0 2px 8px rgba(0,28,63,.08);
+  --r-ctl: 8px; --r-surf: 12px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #07111f; --surface: #0d1b2f; --surface-2: #112339; --ink: #e7eef7; --muted: #9db0c5; --line: #22385a; --line-2: #182b45;
+  --primary: #5d8dff; --primary-ink: #04122a; --primary-soft: #16294a; --focus: #7fb0ff; --bright: #7fb0ff; --cyan-ink: #5fe6fb;
+  --ok-bg: #0e3324; --ok-ink: #8fe3b6; --warn-bg: #3a2a0c; --warn-ink: #ffd28a; --err-bg: #3d1519; --err-ink: #ff7a80;
+  --approval: #a98bff; --approval-soft: #221a45; --off-bg: #132439; --off-ink: #5f738c; --navy: #020c1a;
+  --admin: #00dcfa; --admin-ink: #02121f;
+  --shadow: 0 12px 32px rgba(0,0,0,.55); --shadow-sm: 0 2px 8px rgba(0,0,0,.4); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #07111f; --surface: #0d1b2f; --surface-2: #112339; --ink: #e7eef7; --muted: #9db0c5; --line: #22385a; --line-2: #182b45;
+  --primary: #5d8dff; --primary-ink: #04122a; --primary-soft: #16294a; --focus: #7fb0ff; --bright: #7fb0ff; --cyan-ink: #5fe6fb;
+  --ok-bg: #0e3324; --ok-ink: #8fe3b6; --warn-bg: #3a2a0c; --warn-ink: #ffd28a; --err-bg: #3d1519; --err-ink: #ff7a80;
+  --approval: #a98bff; --approval-soft: #221a45; --off-bg: #132439; --off-ink: #5f738c; --navy: #020c1a;
+  --admin: #00dcfa; --admin-ink: #02121f;
+  --shadow: 0 12px 32px rgba(0,0,0,.55); --shadow-sm: 0 2px 8px rgba(0,0,0,.4); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 14px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+button:disabled { cursor: not-allowed; opacity: .5; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.ic { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 24px 120px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 18px; }
+.head { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; }
+.head h1 { font-size: 24px; font-weight: 600; letter-spacing: -.01em; }
+.head p { color: var(--muted); font-size: 13px; max-width: 70ch; }
+.me-chip { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs button { padding: 10px 14px; font-size: 13.5px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; display: inline-flex; gap: 8px; align-items: center; }
+.tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; border-color: var(--cyan); }
+.count { font-size: 11px; font-weight: 600; padding: 0 7px; border-radius: 999px; background: var(--warn-bg); color: var(--warn-ink); }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--r-ctl); font-size: 13px; font-weight: 500; white-space: nowrap; }
+.btn.primary { background: var(--primary); color: var(--primary-ink); }
+.btn.ghost { border: 1px solid var(--line); background: var(--surface); }
+.btn.ghost:hover:not(:disabled) { border-color: var(--bright); }
+.btn.danger { border: 1px solid var(--err-ink); color: var(--err-ink); background: var(--surface); }
+.btn.sm { padding: 5px 10px; font-size: 12px; }
+.link { color: var(--bright); font-weight: 500; font-size: 13px; }
+.link:hover { text-decoration: underline; }
+
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; padding: 2px 10px; border-radius: 999px; background: var(--off-bg); color: var(--off-ink); white-space: nowrap; }
+.pill.ok { background: var(--ok-bg); color: var(--ok-ink); }
+.pill.warn { background: var(--warn-bg); color: var(--warn-ink); }
+.pill.pri { background: var(--primary-soft); color: var(--primary); }
+.pill.adm { background: var(--admin); color: var(--admin-ink); }
+.pill.prop { background: transparent; border: 1px dashed var(--approval); color: var(--approval); }
+.pill.sim { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
+.note { font-size: 12.5px; color: var(--muted); }
+
+.banner { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px 16px; border-radius: var(--r-surf); border: 1px solid var(--line); background: var(--surface); }
+.banner .txt { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.banner b { font-weight: 600; font-size: 13.5px; }
+.banner span { font-size: 12.5px; color: var(--muted); }
+.banner.warn { background: var(--warn-bg); border-color: transparent; }
+.banner.warn b, .banner.warn span { color: var(--warn-ink); }
+.banner .b-ic { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: var(--primary-soft); color: var(--primary); flex: none; }
+.banner.warn .b-ic { background: rgba(122,74,0,.12); color: var(--warn-ink); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-surf); padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card-h { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
+.card-h h2 { font-size: 15px; font-weight: 600; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; align-items: start; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--surface); padding: 0 10px; flex: 1 1 220px; max-width: 320px; color: var(--muted); }
+.search input { border: 0; background: transparent; padding: 8px 0; min-width: 0; flex: 1; color: var(--ink); outline: none; }
+.chip { padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 12.5px; display: inline-flex; gap: 6px; align-items: center; }
+.chip[aria-pressed="true"] { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
+.chip .n { opacity: .7; }
+select.f, input.f { border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--surface); padding: 8px 10px; min-width: 0; color: var(--ink); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r-ctl); overflow: hidden; background: var(--surface); flex-wrap: wrap; }
+.seg button { padding: 7px 14px; font-size: 13px; }
+.seg button[aria-pressed="true"] { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+
+/* Personas */
+.av { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; flex: none; background: var(--navy); display: inline-flex; }
+.av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.av .ini { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 12px; }
+.av.lg { width: 56px; height: 56px; }
+.who { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.who div { min-width: 0; display: flex; flex-direction: column; line-height: 1.3; }
+.who b { font-weight: 600; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.who small { font-size: 11.5px; color: var(--muted); }
+
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-surf); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; font-weight: 500; font-size: 11.5px; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; background: var(--surface-2); }
+td { padding: 10px 14px; border-bottom: 1px solid var(--line-2); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+tr.row { cursor: pointer; }
+tr.row:hover td { background: var(--surface-2); }
+tr.row.sel td { background: var(--primary-soft); }
+.caps { display: flex; flex-wrap: wrap; gap: 4px; }
+.cap { font-size: 11.5px; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); white-space: nowrap; }
+.cap.extra { border-style: dashed; border-color: var(--bright); color: var(--bright); background: transparent; }
+.cap.adm { background: var(--admin); color: var(--admin-ink); border-color: transparent; }
+.dash { color: var(--off-ink); }
+
+/* Matriz de roles */
+.mx td.c, .mx th.c { text-align: center; }
+.mx .yes { color: var(--ok-ink); }
+.mx .per { font-size: 11.5px; color: var(--muted); }
+
+/* Hoja lateral de edicion */
+.sheet-bg { position: fixed; inset: 0; background: rgba(0,28,63,.28); z-index: 40; }
+.sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 100%); background: var(--surface); border-left: 1px solid var(--line); box-shadow: var(--shadow); z-index: 41; display: flex; flex-direction: column; }
+.sheet-h { display: flex; gap: 12px; align-items: center; padding: calc(16px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) 16px 18px; border-bottom: 1px solid var(--line); }
+.sheet-h .x { margin-left: auto; width: 36px; height: 36px; border-radius: var(--r-ctl); display: inline-flex; align-items: center; justify-content: center; color: var(--muted); }
+.sheet-h .x:hover { background: var(--surface-2); color: var(--ink); }
+.sheet-b { flex: 1; overflow-y: auto; padding: 18px max(18px, env(safe-area-inset-right, 0px)) 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+.sheet-f { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; padding: 12px max(18px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) 18px; border-top: 1px solid var(--line); align-items: center; }
+.sheet-f .note { margin-right: auto; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > label, .field > .lbl { font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+.meta { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 12.5px; }
+.meta dt { color: var(--muted); }
+.meta dd { margin: 0; }
+.opts { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r-surf); overflow: hidden; }
+.opt { display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: start; padding: 12px 14px; border-bottom: 1px solid var(--line-2); cursor: pointer; }
+.opt:last-child { border-bottom: 0; }
+.opt input { margin: 3px 0 0; width: 16px; height: 16px; accent-color: var(--primary); }
+.opt b { font-weight: 500; font-size: 13.5px; display: block; }
+.opt small { color: var(--muted); font-size: 12px; }
+.opt.locked { cursor: default; background: var(--surface-2); }
+.opt .src { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.opt.adm b { font-weight: 600; }
+.guard { font-size: 12px; color: var(--warn-ink); background: var(--warn-bg); border-radius: var(--r-ctl); padding: 8px 10px; }
+.confirm { border: 1px solid var(--err-ink); border-radius: var(--r-surf); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; background: var(--err-bg); color: var(--err-ink); font-size: 13px; }
+.confirm .row-b { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* WBS */
+.phases { display: flex; flex-direction: column; gap: 10px; }
+.phase { border: 1px solid var(--line); border-radius: var(--r-surf); background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.phase.off { background: var(--surface-2); border-style: dashed; }
+.phase-h { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.phase-h .ord { font-size: 12px; color: var(--muted); width: 22px; }
+.phase-h h3 { font-size: 14px; font-weight: 600; flex: 1 1 160px; min-width: 0; }
+.phase.off h3 { color: var(--off-ink); }
+.acts { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.act { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; padding: 3px 4px 3px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); }
+.act.off { text-decoration: line-through; color: var(--off-ink); }
+.act button { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--muted); }
+.act button:hover { background: var(--line-2); color: var(--ink); }
+.act button .ic { width: 12px; height: 12px; }
+.add-in { display: inline-flex; gap: 6px; align-items: center; }
+.add-in input { width: 180px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; }
+
+/* omnIA */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.meter { position: relative; height: 8px; border-radius: 999px; background: var(--line-2); min-width: 120px; }
+.meter i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--bright); }
+.meter i.warn { background: #e3a008; }
+.meter i.full { background: var(--err-ink); }
+.meter em { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--muted); opacity: .6; }
+.num { font-weight: 600; }
+.types { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Preferencias */
+.pref { display: grid; grid-template-columns: minmax(160px, 220px) 1fr; gap: 10px 20px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line-2); }
+.pref:last-child { border-bottom: 0; }
+.pref .l b { display: block; font-weight: 500; font-size: 13.5px; }
+.pref .l small { color: var(--muted); font-size: 12px; }
+.pref .r { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; }
+.sw { position: relative; width: 38px; height: 22px; border-radius: 999px; background: var(--line); flex: none; }
+.sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: var(--shadow-sm); }
+.sw[aria-checked="true"] { background: var(--primary); }
+.sw[aria-checked="true"]::after { transform: translateX(16px); }
+
+/* Registro */
+.log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.log li { display: grid; grid-template-columns: 140px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line-2); font-size: 13px; }
+.log li:last-child { border-bottom: 0; }
+.log time { color: var(--muted); font-size: 12px; }
+.log b { font-weight: 600; }
+
+.empty { padding: 40px 16px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--r-surf); }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 16px; border-radius: var(--r-ctl); font-size: 13px; z-index: 60; box-shadow: var(--shadow); max-width: calc(100% - 32px); }
+
+@media (max-width: 720px) {
+  .pref { grid-template-columns: 1fr; }
+  .log li { grid-template-columns: 1fr; gap: 2px; }
+  .hide-sm { display: none; }
+  td, th { padding: 9px 10px; }
+}
+@media (prefers-reduced-motion: reduce) { .sw::after { transition: none; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2zM12 10v5M12 18h.01"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></symbol>
+</svg>
+
+<div class="wrap" id="app"></div>
+<div id="sheetRoot"></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var SH = window.KAIROS_SHELL, HOST = window.KAIROS_HOST;
+  if (!SH || !HOST || !HOST.cfg) {
+    $('app').innerHTML = '<div class="empty">Configuración se abre dentro del Ecosistema de Kairos, con una sesión iniciada.</div>';
+    return;
+  }
+
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var tt;
+  function toast(t) { var el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(tt); tt = setTimeout(function () { el.hidden = true; }, 2600); }
+  var LS = 'kairos.settings';
+  function sGet() {
+    try { var s = JSON.parse(localStorage.getItem(LS)); if (s && s.v === 1) return s; } catch (e) {}
+    return seedSettings();
+  }
+  function sSave() { try { localStorage.setItem(LS, JSON.stringify(ST)); } catch (e) {} }
+
+  /* ---------- Datos de ejemplo ---------- */
+  function seedSettings() {
+    function ph(name, acts) { return { name: name, on: true, acts: acts.map(function (a) { return { name: a, on: true }; }) }; }
+    return { v: 1,
+      wbs: {
+        SM: [ph('Levantamiento', ['Visita a planta', 'Levantamiento de requisitos', 'Diagnóstico de datos']),
+             ph('Diseño', ['Diseño funcional MES', 'Arquitectura de integración', 'Modelo de datos']),
+             ph('Desarrollo', ['Configuración MES', 'Integración con ERP', 'Tableros OEE']),
+             ph('Pruebas', ['FAT', 'SAT']),
+             ph('Puesta en marcha', ['Arranque asistido', 'Capacitación a usuarios']),
+             ph('Cierre', ['Documentación as built', 'Acta de entrega'])],
+        AU: [ph('Ingeniería', ['Diseño eléctrico', 'Diseño de PLC', 'Listado de señales']),
+             ph('Programación', ['Programación PLC', 'HMI / SCADA']),
+             ph('Montaje', ['Supervisión de montaje', 'Pruebas en vacío']),
+             ph('Puesta en marcha', ['Pruebas con proceso', 'Ajustes de lazo', 'Capacitación']),
+             ph('Cierre', ['Documentación as built'])],
+        CO: [ph('Diagnóstico', ['Entrevistas', 'Evaluación de madurez']),
+             ph('Hoja de ruta', ['Priorización de iniciativas', 'Plan por fases']),
+             ph('Acompañamiento', ['Comités de seguimiento'])]
+      },
+      omnia: { limit: 50, warn: 80, reviewer: '' },
+      prefs: {}
+    };
+  }
+  var UNITS = [['SM', 'Smart Manufacturing'], ['AU', 'Automation'], ['CO', 'Consultoría']];
+  /* Uso de omnIA hoy (simulado) */
+  var USAGE = [
+    ['USR-JULIANA-TORRES', 41, 1, '10:48'], ['USR-SEBASTIAN-VALENCIA', 18, 0, '10:31'], ['USR-ERNESTO-OSORIO', 12, 0, '09:57'],
+    ['USR-BRAINER-OCAMPO', 9, 1, '09:12'], ['USR-GONZALO-PERDOMO', 6, 0, '08:40'], ['USR-LAURA-POSSO', 50, 2, '08:22']
+  ];
+
+  var ST = sGet();
+  var CAPS = SH.capsCatalog, ROLE_CAPS = SH.roleCaps, ROLES = SH.roles;
+  function capOf(k) { return CAPS.filter(function (c) { return c.key === k; })[0]; }
+  function roleOf(k) { return ROLES.filter(function (r) { return r.key === k; })[0]; }
+  function user(id) { return SH.users.filter(function (u) { return u.id === id; })[0]; }
+  function isAdmin() { return SH.caps.indexOf('administrar') >= 0; }
+  function admins() { return SH.users.filter(function (u) { return u.role && u.caps.indexOf('administrar') >= 0; }); }
+  function photo(u) { return '<span class="av">' + SH.photo(u.face) + '</span>'; }
+  function who(u, sub) { return '<span class="who">' + photo(u) + '<div><b>' + esc(u.name) + '</b><small>' + esc(sub == null ? u.id : sub) + '</small></div></span>'; }
+  function capChips(u) {
+    if (!u.role) return '<span class="dash">Sin acceso</span>';
+    var base = ROLE_CAPS[u.role] || [];
+    if (!u.caps.length) return '<span class="dash">Solo lectura</span>';
+    return '<span class="caps">' + u.caps.map(function (k) {
+      var cls = k === 'administrar' ? 'cap adm' : base.indexOf(k) < 0 ? 'cap extra' : 'cap';
+      return '<span class="' + cls + '" title="' + (base.indexOf(k) < 0 ? 'Asignada a la persona' : 'Incluida en el rol') + '">' + (base.indexOf(k) < 0 && k !== 'administrar' ? '+ ' : '') + esc(capOf(k).label) + '</span>';
+    }).join('') + '</span>';
+  }
+  function fmtAt(s) {
+    var d = new Date(s); if (isNaN(d)) return s;
+    var m = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sept', 'oct', 'nov', 'dic'][d.getMonth()];
+    return d.getDate() + ' ' + m + ' · ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+  function nowIso() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + 'T' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+
+  /* ---------- Estado de la vista ---------- */
+  var ui = { tab: null, q: '', f: 'todos', unit: 'SM', edit: null };
+  /* Atajo desde Inicio: abre la pestana pedida una sola vez */
+  try { var goTab = localStorage.getItem('kairos-config-goto'); if (goTab) { ui.tab = goTab; localStorage.removeItem('kairos-config-goto'); } } catch (e) {}
+  function tabs() {
+    return isAdmin()
+      ? [['usuarios', 'Usuarios y acceso'], ['roles', 'Roles y capacidades'], ['organizacion', 'Clusters y regionales'], ['wbs', 'WBS'], ['analitica', 'Analítica']].concat(SH.role === 'planeacion' ? [['bloqueos', 'Semanas bloqueadas']] : [], [['omnia', 'omnIA'], ['preferencias', 'Mis preferencias'], ['registro', 'Registro de cambios']])
+      : [['acceso', 'Mi acceso']].concat(myClusters().length ? [['organizacion', 'Clusters y regionales']] : [], SH.role === 'planeacion' ? [['analitica', 'Analítica'], ['bloqueos', 'Semanas bloqueadas']] : [], [['preferencias', 'Mis preferencias']]);
+  }
+
+  function render() {
+    var T = tabs();
+    if (!T.some(function (t) { return t[0] === ui.tab; })) ui.tab = T[0][0];
+    var pending = SH.users.filter(function (u) { return !u.role; }).length;
+    var html = '<div class="head"><div><h1>Configuración</h1><p>' +
+      (isAdmin() ? 'Asigna roles y capacidades a las personas que llegan de Microsoft, gobierna la WBS por unidad de negocio y define los límites de omnIA.' : 'Tus preferencias de Kairos y el acceso que tienes asignado.') +
+      '</p></div>' + (isAdmin() ? '<span class="pill adm">Administrar Kairos</span>' : '') + '</div>' +
+      '<div class="tabs" role="tablist">' + T.map(function (t) {
+        return '<button role="tab" data-tab="' + t[0] + '" aria-selected="' + (t[0] === ui.tab) + '">' + t[1] + (t[0] === 'usuarios' && pending ? '<span class="count">' + pending + '</span>' : '') + '</button>';
+      }).join('') + '</div>' + VIEW[ui.tab]();
+    $('app').innerHTML = html;
+    renderSheet();
+  }
+
+  var VIEW = {};
+
+  /* ---------- Semanas bloqueadas [ACORDADO 3-nov]: solo Planeacion; reusa la vista de Ejecucion embebida ---------- */
+  VIEW.bloqueos = function () {
+    return '<iframe class="emb-lk" src="ejecucion.html#bloqueos&embed" title="Semanas bloqueadas" style="display:block;width:100%;min-height:360px;border:0;background:transparent"></iframe>';
+  };
+
+  /* ---------- Usuarios y acceso ---------- */
+  VIEW.usuarios = function () {
+    var all = SH.users.slice().sort(function (a, b) { return (a.role ? 1 : 0) - (b.role ? 1 : 0) || a.name.localeCompare(b.name, 'es'); });
+    var pend = all.filter(function (u) { return !u.role; });
+    var q = ui.q.trim().toLowerCase();
+    var list = all.filter(function (u) {
+      if (ui.f === 'sinrol' && u.role) return false;
+      if (ui.f === 'admin' && u.caps.indexOf('administrar') < 0) return false;
+      if (ui.f === 'extra' && !(u.role && u.caps.some(function (k) { return (ROLE_CAPS[u.role] || []).indexOf(k) < 0; }))) return false;
+      if (ui.f.indexOf('r:') === 0 && u.role !== ui.f.slice(2)) return false;
+      if (q && (u.name + ' ' + u.id + ' ' + (u.role ? roleOf(u.role).label : 'sin rol')).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    var n = function (fn) { return all.filter(fn).length; };
+    var chip = function (k, l, c) { return '<button class="chip" data-f="' + k + '" aria-pressed="' + (ui.f === k) + '">' + l + ' <span class="n">' + c + '</span></button>'; };
+    var html = '<div class="banner"><span class="b-ic"><svg class="ic"><use href="#i-users"></use></svg></span><div class="txt"><b>Las personas vienen de Microsoft Entra ID</b>' +
+      '<span>Aquí no se crean usuarios: solo se asigna el rol y las capacidades adicionales. Última sincronización: hoy 06:00.</span></div>' +
+      '<span class="pill sim">Entra ID · simulado</span><button class="btn ghost sm" data-act="sync"><svg class="ic"><use href="#i-sync"></use></svg>Sincronizar</button></div>';
+    if (pend.length) html += '<div class="banner warn"><span class="b-ic"><svg class="ic"><use href="#i-alert"></use></svg></span><div class="txt"><b>' + pend.length + (pend.length === 1 ? ' persona nueva sin rol' : ' personas nuevas sin rol') + '</b>' +
+      '<span>' + pend.map(function (u) { return u.name; }).join(', ') + (pend.length === 1 ? ' ya está en Entra ID pero no puede entrar a Kairos hasta tener un rol.' : ' ya están en Entra ID pero no pueden entrar a Kairos hasta tener un rol.') + '</span></div>' +
+      '<button class="btn ghost sm" data-f="sinrol">Ver</button></div>';
+    html += '<div class="filters"><label class="search"><svg class="ic"><use href="#i-search"></use></svg><span class="sr">Buscar persona</span><input id="q" type="search" placeholder="Buscar persona o rol" value="' + esc(ui.q) + '"></label>' +
+      chip('todos', 'Todos', all.length) + chip('sinrol', 'Sin rol', pend.length) + chip('admin', 'Administran', n(function (u) { return u.caps.indexOf('administrar') >= 0; })) +
+      chip('extra', 'Con capacidades adicionales', n(function (u) { return u.role && u.caps.some(function (k) { return (ROLE_CAPS[u.role] || []).indexOf(k) < 0; }); })) +
+      '<label class="sr" for="fRole">Filtrar por rol</label><select class="f" id="fRole"><option value="">Rol: todos</option>' + ROLES.map(function (r) { return '<option value="r:' + r.key + '"' + (ui.f === 'r:' + r.key ? ' selected' : '') + '>' + r.label + '</option>'; }).join('') + '</select></div>';
+    if (!list.length) return html + '<div class="empty">Nadie coincide con la búsqueda.</div>';
+    html += '<div class="tbl-wrap"><table><thead><tr><th>Persona</th><th>Rol</th><th>Capacidades</th><th class="hide-sm">Estado</th></tr></thead><tbody>' + list.map(function (u) {
+      var st = !u.role ? '<span class="pill warn">Sin rol</span>' : '<span class="pill ok">Activo</span>';
+      return '<tr class="row' + (ui.edit === u.id ? ' sel' : '') + '" data-edit="' + u.id + '" tabindex="0" aria-label="Editar acceso de ' + esc(u.name) + '">' +
+        '<td>' + who(u, u.job || (u.synced ? 'Llegó de Entra ID el 22 oct' : u.id)) + '</td>' +
+        '<td>' + (u.role ? esc(roleOf(u.role).label) : '<span class="dash">Sin asignar</span>') + '</td>' +
+        '<td>' + capChips(u) + '</td><td class="hide-sm">' + st + '</td></tr>';
+    }).join('') + '</tbody></table></div>' +
+      '<p class="note">Capacidad con borde punteado y signo + : asignada a la persona, además de las que trae su rol.</p>';
+    return html;
+  };
+
+  /* Hoja de edicion de una persona */
+  var draft = null;
+  function openEdit(id) {
+    var u = user(id); if (!u) return;
+    var base = ROLE_CAPS[u.role] || [];
+    draft = { id: id, role: u.role || '', extra: u.caps.filter(function (k) { return base.indexOf(k) < 0; }), confirmSelf: false };
+    ui.edit = id; render();
+    setTimeout(function () { var f = $('dRole'); if (f) f.focus(); }, 0);
+  }
+  function closeEdit() { draft = null; ui.edit = null; render(); }
+  function draftCaps() {
+    var base = ROLE_CAPS[draft.role] || [];
+    var out = base.slice(); if (draft.role) draft.extra.forEach(function (k) { if (out.indexOf(k) < 0) out.push(k); });
+    return out;
+  }
+  function changed() {
+    var u = user(draft.id);
+    return (u.role || '') !== draft.role || draftCaps().slice().sort().join() !== u.caps.slice().sort().join();
+  }
+  function lastAdmin() { var a = admins(); return a.length === 1 && a[0].id === draft.id; }
+  function renderSheet() {
+    if (!draft) { $('sheetRoot').innerHTML = ''; return; }
+    var u = user(draft.id), base = ROLE_CAPS[draft.role] || [], caps = draftCaps();
+    var isLast = lastAdmin(), self = draft.id === SH.id;
+    var losingAdmin = u.caps.indexOf('administrar') >= 0 && caps.indexOf('administrar') < 0;
+    var opts = CAPS.map(function (c) {
+      var inRole = base.indexOf(c.key) >= 0, on = caps.indexOf(c.key) >= 0;
+      var lock = inRole || !draft.role || (c.key === 'administrar' && isLast && on);
+      return '<label class="opt' + (lock ? ' locked' : '') + (c.key === 'administrar' ? ' adm' : '') + '"><input type="checkbox" data-cap="' + c.key + '"' + (on ? ' checked' : '') + (lock ? ' disabled' : '') + '>' +
+        '<span><b>' + esc(c.label) + '</b><small>' + esc(c.what) + '</small></span>' +
+        '<span class="src">' + (inRole ? 'Incluida en el rol' : on ? 'Adicional' : '') + '</span></label>';
+    }).join('');
+    var html = '<div class="sheet-bg" data-act="close"></div><aside class="sheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">' +
+      '<div class="sheet-h"><span class="av lg">' + SH.photo(u.face) + '</span><div class="who"><div><b id="sTitle">' + esc(u.name) + '</b><small>' + esc(u.id) + (self ? ' · tú' : '') + '</small></div></div>' +
+      '<button class="x" data-act="close" aria-label="Cerrar"><svg class="ic"><use href="#i-x"></use></svg></button></div>' +
+      '<div class="sheet-b">' +
+      '<dl class="meta"><dt>Origen</dt><dd>Microsoft Entra ID <span class="pill sim">simulado</span></dd><dt>Cargo</dt><dd>' + esc(u.job || '—') + '<br><small class="note">Viene de Entra ID; se cambia en Microsoft 365 y llega al sincronizar</small></dd><dt>Estado</dt><dd>' + (u.role ? 'Activo en Kairos' : 'Sin rol, no puede entrar') + '</dd></dl>' +
+      '<div class="field"><label for="dRole">Rol</label><select class="f" id="dRole"><option value="">Sin rol (no puede entrar)</option>' +
+      ROLES.map(function (r) { return '<option value="' + r.key + '"' + (draft.role === r.key ? ' selected' : '') + '>' + r.label + '</option>'; }).join('') + '</select>' +
+      (draft.role ? '<span class="note">' + esc(roleOf(draft.role).what) + '</span>' : '') +
+      (isLast && !draft.role ? '<span class="guard">Es la única persona que administra Kairos. Asigna Administrar a otra persona antes de dejarla sin rol.</span>' : '') + '</div>' +
+      '<div class="field"><span class="lbl">Capacidades</span><div class="opts">' + opts + '</div>' +
+      (isLast && caps.indexOf('administrar') >= 0 ? '<span class="guard">Kairos siempre necesita al menos una persona con Administrar. Para quitársela, primero asígnala a otra persona.</span>' : '') + '</div>' +
+      (draft.confirmSelf ? '<div class="confirm" role="alert"><b>Vas a quitarte Administrar.</b><span>Perderás acceso a Usuarios, WBS, omnIA y Registro. Solo otro administrador podrá devolvértela.</span>' +
+        '<div class="row-b"><button class="btn danger sm" data-act="saveSelf">Quitarme Administrar</button><button class="btn ghost sm" data-act="noSelf">Cancelar</button></div></div>' : '') +
+      '</div><div class="sheet-f"><span class="note">' + (changed() ? 'Cambios sin guardar' : 'Sin cambios') + '</span>' +
+      '<button class="btn ghost" data-act="close">Cancelar</button><button class="btn primary" data-act="save"' + (!changed() || (isLast && (!draft.role || losingAdmin)) ? ' disabled' : '') + '>Guardar</button></div></aside>';
+    $('sheetRoot').innerHTML = html;
+  }
+  function describe(u, cfgRole, caps) {
+    var parts = [], before = u.caps;
+    if ((u.role || '') !== cfgRole) parts.push(cfgRole ? 'rol ' + roleOf(cfgRole).label : 'quitó el rol');
+    caps.forEach(function (k) { if (before.indexOf(k) < 0 && (ROLE_CAPS[cfgRole] || []).indexOf(k) < 0) parts.push('agregó ' + capOf(k).label); });
+    before.forEach(function (k) { if (caps.indexOf(k) < 0 && (ROLE_CAPS[cfgRole] || []).indexOf(k) < 0 && (ROLE_CAPS[u.role] || []).indexOf(k) < 0) parts.push('quitó ' + capOf(k).label); });
+    return u.name + ': ' + (parts.join(', ') || 'actualizó acceso') + '.';
+  }
+  function save(force) {
+    var u = user(draft.id), caps = draftCaps();
+    if (draft.id === SH.id && u.caps.indexOf('administrar') >= 0 && caps.indexOf('administrar') < 0 && !force) { draft.confirmSelf = true; renderSheet(); return; }
+    var c = HOST.cfg.get();
+    if ((u.baseRole || '') === draft.role) delete c.roleOf[u.id]; else c.roleOf[u.id] = draft.role || null;
+    var base = ROLE_CAPS[draft.role] || [];
+    var extra = draft.extra.filter(function (k) { return base.indexOf(k) < 0; });
+    if (extra.length) c.extra[u.id] = extra; else delete c.extra[u.id];
+    c.log.push({ at: nowIso(), by: SH.user, t: describe(u, draft.role, caps) });
+    if (!HOST.cfg.set(c)) { toast('No se guardó: Kairos debe tener al menos una persona con Administrar'); return; }
+    var name = u.name; draft = null; ui.edit = null;
+    toast('Acceso de ' + name + ' guardado');
+    render();
+  }
+
+  /* ---------- Roles y capacidades ---------- */
+  VIEW.roles = function () {
+    var count = function (k) { return SH.users.filter(function (u) { return u.role === k; }).length; };
+    return '<div class="banner"><span class="b-ic"><svg class="ic"><use href="#i-lock"></use></svg></span><div class="txt"><b>Cada rol trae un paquete de capacidades. Administrar se asigna por persona.</b>' +
+      '<span>Los roles son fijos en esta versión. Para dar una capacidad a alguien sin cambiar su rol, edítalo en Usuarios y acceso. Administrativo es un rol de solo lectura; no tiene relación con Administrar.</span></div>' +
+      '<span class="pill prop">Propuesta · pendiente de aprobar</span></div>' +
+      '<div class="tbl-wrap"><table class="mx"><thead><tr><th>Rol</th><th class="c">Personas</th>' + CAPS.map(function (c) { return '<th class="c">' + esc(c.label) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      ROLES.map(function (r) {
+        return '<tr><td><b>' + esc(r.label) + '</b><br><span class="note">' + esc(r.what) + '</span></td><td class="c">' + count(r.key) + '</td>' + CAPS.map(function (c) {
+          if (c.key === 'administrar') return '<td class="c per">Por persona</td>';
+          return (ROLE_CAPS[r.key] || []).indexOf(c.key) >= 0 ? '<td class="c yes"><svg class="ic" aria-label="Sí"><use href="#i-check"></use></svg></td>' : '<td class="c dash">—</td>';
+        }).join('') + '</tr>';
+      }).join('') + '</tbody></table></div>' +
+      '<div class="cols">' + CAPS.map(function (c) {
+        var holders = SH.users.filter(function (u) { return u.role && u.caps.indexOf(c.key) >= 0; });
+        return '<div class="card"><div class="card-h"><h2>' + esc(c.label) + '</h2><span class="pill ' + (c.key === 'administrar' ? 'adm' : 'pri') + '">' + holders.length + ' personas</span></div><p class="note">' + esc(c.what) + '</p></div>';
+      }).join('') + '</div>' +
+      '<p class="note">Pendiente de Diego: confirmar qué roles traen Cotizar. En producción, omnIA y cada módulo validan la capacidad en el servidor.</p>';
+  };
+
+  /* ---------- WBS ---------- */
+  VIEW.wbs = function () {
+    var ph = ST.wbs[ui.unit];
+    return '<div class="banner"><span class="b-ic"><svg class="ic"><use href="#i-lock"></use></svg></span><div class="txt"><b>Catálogo de fases y actividades por unidad de negocio</b>' +
+      '<span>Las cotizaciones toman de aquí su WBS. Cada cotización puede renombrar una fase o actividad sin cambiar el catálogo. Desactivar no borra: el histórico conserva el nombre.</span></div>' +
+      '<span class="pill warn">Ejemplo · WBS por levantar con cada unidad</span></div>' +
+      '<div class="filters"><div class="seg" role="group" aria-label="Unidad de negocio">' + UNITS.map(function (u) {
+        return '<button data-unit="' + u[0] + '" aria-pressed="' + (ui.unit === u[0]) + '">' + u[1] + '</button>';
+      }).join('') + '</div><span class="note">' + ph.filter(function (p) { return p.on; }).length + ' fases activas · ' +
+      ph.reduce(function (a, p) { return a + p.acts.filter(function (x) { return x.on; }).length; }, 0) + ' actividades</span></div>' +
+      '<div class="phases">' + ph.map(function (p, i) {
+        return '<div class="phase' + (p.on ? '' : ' off') + '"><div class="phase-h"><span class="ord">' + (i + 1) + '</span><h3>' + esc(p.name) + '</h3>' +
+          (p.on ? '' : '<span class="pill">Inactiva</span>') +
+          '<button class="btn ghost sm" data-phase="' + i + '">' + (p.on ? 'Desactivar' : 'Reactivar') + '</button></div>' +
+          '<div class="acts">' + p.acts.map(function (a, j) {
+            return '<span class="act' + (a.on ? '' : ' off') + '">' + esc(a.name) + '<button data-act-t="' + i + ':' + j + '" aria-label="' + (a.on ? 'Desactivar ' : 'Reactivar ') + esc(a.name) + '" title="' + (a.on ? 'Desactivar' : 'Reactivar') + '"><svg class="ic"><use href="' + (a.on ? '#i-x' : '#i-undo') + '"></use></svg></button></span>';
+          }).join('') +
+          (p.on ? '<form class="add-in" data-add-act="' + i + '"><label class="sr" for="na' + i + '">Nueva actividad en ' + esc(p.name) + '</label><input class="f" id="na' + i + '" placeholder="Nueva actividad" maxlength="60"><button class="btn ghost sm" aria-label="Agregar actividad"><svg class="ic"><use href="#i-plus"></use></svg></button></form>' : '') +
+          '</div></div>';
+      }).join('') + '</div>' +
+      '<form class="add-in" data-add-phase="1"><label class="sr" for="np">Nueva fase</label><input class="f" id="np" placeholder="Nueva fase" maxlength="50"><button class="btn primary sm"><svg class="ic"><use href="#i-plus"></use></svg>Agregar fase</button></form>';
+  };
+
+  /* ---------- omnIA ---------- */
+  VIEW.omnia = function () {
+    var o = ST.omnia, lim = o.limit, warnAt = Math.round(lim * o.warn / 100);
+    var rows = USAGE.map(function (r) {
+      var u = user(r[0]); if (!u) return '';
+      var pct = Math.min(100, r[1] / lim * 100), cls = r[1] >= lim ? 'full' : r[1] >= warnAt ? 'warn' : '';
+      return '<tr><td>' + who(u, u.role ? roleOf(u.role).label : 'Sin rol') + '</td><td><span class="num">' + r[1] + '</span> / ' + lim + '</td>' +
+        '<td style="min-width:140px"><span class="meter"><i class="' + cls + '" style="width:' + pct + '%"></i><em style="left:' + o.warn + '%"></em></span></td>' +
+        '<td class="hide-sm">' + (r[1] >= lim ? '<span class="pill warn">En el límite</span>' : r[2] ? r[2] + ' incompletas' : 'Sin errores') + '</td><td class="hide-sm">' + r[3] + '</td></tr>';
+    }).join('');
+    var opts = SH.users.filter(function (u) { return u.role; }).map(function (u) { return '<option value="' + u.id + '"' + (o.reviewer === u.id ? ' selected' : '') + '>' + esc(u.name) + '</option>'; }).join('');
+    return '<div class="cols">' +
+      '<form class="card" id="omForm"><div class="card-h"><h2>Límite de uso</h2><span class="pill prop">Valor pendiente de definir</span></div>' +
+      '<div class="kv"><div class="field"><label for="omLim">Interacciones por persona al día</label><input class="f" id="omLim" type="number" min="5" max="500" step="5" value="' + lim + '"></div>' +
+      '<div class="field"><label for="omWarn">Avisar al llegar al</label><select class="f" id="omWarn">' + [70, 80, 90].map(function (v) { return '<option value="' + v + '"' + (o.warn === v ? ' selected' : '') + '>' + v + ' %</option>'; }).join('') + '</select></div></div>' +
+      '<p class="note">El contador se reinicia a las 00:00, hora de Colombia. Al superar el límite, omnIA bloquea la escritura y muestra la hora de restablecimiento.</p>' +
+      '<div class="field"><label for="omRev">Quién revisa el reporte de uso</label><select class="f" id="omRev"><option value="">Pendiente de definir</option>' + opts + '</select></div>' +
+      '<div><button class="btn primary">Guardar límites</button></div></form>' +
+      '<div class="card"><div class="card-h"><h2>Adjuntos y motor</h2><span class="pill ok">Acordado 23 oct</span></div>' +
+      '<div class="field"><span class="lbl">Tipos admitidos</span><div class="types">' + ['PDF', 'DOCX', 'XLSX', 'PNG', 'JPG'].map(function (t) { return '<span class="cap">' + t + '</span>'; }).join('') + '</div></div>' +
+      '<div class="field"><span class="lbl">Tamaño máximo</span><span>15 MB por archivo</span></div>' +
+      '<div class="field"><span class="lbl">Motor</span><span>Simulado (fase 1) <span class="pill sim">sin modelo de IA real</span></span></div>' +
+      '<p class="note">Quién puede chatear con omnIA lo decide la capacidad Chat de omnIA en Usuarios y acceso.</p></div></div>' +
+      segCard() +
+      '<div class="card"><div class="card-h"><h2>Uso de hoy</h2><span class="pill sim">Datos de ejemplo</span></div>' +
+      '<div class="tbl-wrap"><table><thead><tr><th>Persona</th><th>Interacciones</th><th>Consumo</th><th class="hide-sm">Respuestas</th><th class="hide-sm">Último uso</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p class="note">La marca vertical es el aviso al ' + o.warn + ' %. Cada interacción queda registrada con persona, rol, contexto y resultado.</p></div>';
+  };
+
+  /* ---------- omnIA · Alertas de seguimiento (Maestro 13, punto 15) ----------
+     Los umbrales los guarda el motor del shell (omnia/seguimiento.js), que tambien los valida. */
+  function SEGE() { try { return window.parent && window.parent !== window ? window.parent.OmniaSeguimiento : null; } catch (e) { return null; } }
+  function segCard() {
+    var E = SEGE();
+    if (!E) return '<div class="card"><div class="card-h"><h2>Alertas de seguimiento</h2></div><p class="note">Abre Configuración dentro de Kairos para editar los umbrales.</p></div>';
+    var u = E.umbrales(), n = E.contar(), adm = isAdmin(), dis = adm ? '' : ' disabled';
+    return '<div class="cols">' +
+      '<form class="card" id="segForm"><div class="card-h"><h2>Alertas de seguimiento</h2><span class="pill ok">Acordado 31 oct</span></div>' +
+      '<p class="note">Comparan el % de horas consumidas con el % de avance reportado de cada proyecto activo, en cada corte semanal. El nivel lo calcula una regla fija; omnIA no lo decide.</p>' +
+      '<div class="kv"><div class="field"><label for="segImp">Importante desde (puntos)</label><input class="f" id="segImp" type="number" min="1" max="100" step="1" value="' + u.imp + '"' + dis + '></div>' +
+      '<div class="field"><label for="segCrit">Crítica desde (puntos)</label><input class="f" id="segCrit" type="number" min="2" max="100" step="1" value="' + u.crit + '"' + dis + '></div></div>' +
+      '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="segRep"' + (u.sinReporte ? ' checked' : '') + dis + '> Alertar la semana sin reporte de avance</label>' +
+      '<p class="note">Diferencia = % horas − % avance. La crítica debe ser mayor que la importante. Cambiar un umbral no reescribe las explicaciones ya registradas.</p>' +
+      (adm ? '<div class="row"><button class="btn primary">Guardar umbrales</button><button type="button" class="btn ghost" data-segreset="1">Restablecer 15 / 30</button></div>' : '<p class="note">Solo quien tiene la capacidad Administrar cambia los umbrales.</p>') + '</form>' +
+      '<div class="card"><div class="card-h"><h2>Con estos umbrales, hoy</h2>' + (E.simulado() ? '<span class="pill sim">Corte de referencia</span>' : '') + '</div>' +
+      '<div class="kv"><div class="field"><span class="lbl">Críticas</span><b class="num">' + n.critical + '</b></div><div class="field"><span class="lbl">Importantes</span><b class="num">' + n.important + '</b></div><div class="field"><span class="lbl">Sin reporte</span><b class="num">' + n.reporte + '</b></div></div>' +
+      '<p class="note">Solo proyectos activos con línea base de avance. Los servicios (bolsas y mantenimiento) no tienen % de avance y quedan fuera de la regla de horas.</p>' +
+      '<div class="field"><span class="lbl">Avisos y cierre</span><span>Crítica: aviso inmediato al líder y a Dirección. Importante: resumen los lunes a las 7:00 al líder y a Dirección. Semana sin reporte: importante; crítica desde la segunda semana seguida. La alerta se cierra tras 2 cortes seguidos bajo el umbral.</span></div></div></div>';
+  }
+
+  /* ---------- Clusters y regionales (CAMBIOS 31-oct, maestros de datos) ----------
+     Clusters y regionales son maestros de Odoo (solo lectura). Los responsables y el margen minimo son de Kairos.
+     Los responsables gestionan los CECO de su grupo: filtran analisis y editan como el lider, incluida la reasignacion. */
+  function KM() { try { return window.parent !== window ? window.parent.KairosMaestros : null; } catch (e) { return null; } }
+  function OS() { try { return window.parent !== window ? window.parent.OdooSim : null; } catch (e) { return null; } }
+  /* Clusters que lidera la persona actual: puede asignar los responsables de sus regionales */
+  function myClusters() { var K = KM(); return K ? K.grupos(SH.user).clusters : []; }
+  function canSetResp(tipo, clave) {
+    if (isAdmin()) return true;
+    if (tipo !== 'regional') return false;
+    var O = OS(), r = O && O.regionales().filter(function (x) { return x.id === clave; })[0];
+    return !!r && myClusters().indexOf(r.cluster) >= 0;
+  }
+  VIEW.organizacion = function () {
+    var K = KM(), O = OS(), mine = myClusters(), adm = isAdmin();
+    if (!K || !O) return '<div class="card"><p class="note">Abre Configuración dentro de Kairos para ver los clusters y regionales.</p></div>';
+    var r = K.vigentes(), accs = O.searchReadSync('account.analytic.account', []);
+    var people = SH.users.filter(function (u) { return ['lider', 'direccion', 'planeacion'].indexOf(u.role) >= 0; }).map(function (u) { return u.name; }).sort(function (a, b) { return a.localeCompare(b, 'es'); });
+    function sel(tipo, clave, val) {
+      if (!canSetResp(tipo, clave)) return '<span>' + esc(val || 'Sin asignar') + '</span>';
+      return '<select class="f" data-resp="' + tipo + '" data-key="' + esc(clave) + '" aria-label="Responsable de ' + esc(clave) + '"><option value="">Sin asignar</option>' +
+        people.map(function (n) { return '<option' + (n === val ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('') + '</select>';
+    }
+    var cl = O.clusters.map(function (c) {
+      var regs = O.regionales(c.id), n = accs.filter(function (a) { return a.x_cluster === c.id; }).length;
+      return '<tr><td><b>' + esc(c.name) + '</b></td><td>' + c.currency + '</td><td>' + regs.map(function (x) { return esc(x.id); }).join(', ') + '</td><td class="num">' + n + '</td><td>' + sel('cluster', c.id, r.cluster[c.id]) + '</td></tr>';
+    }).join('');
+    var rg = O.regionales().filter(function (x) { return adm || mine.indexOf(x.cluster) >= 0; }).map(function (x) {
+      var n = accs.filter(function (a) { return a.x_regional === x.id; }).length, ok = K.responsables.confirmados.indexOf(x.id) >= 0;
+      return '<tr><td><b>' + esc(x.id) + '</b></td><td>' + (x.cluster === 'NA' ? 'North America' : 'LATAM') + '</td><td class="num">' + n + '</td><td>' + sel('regional', x.id, r.regional[x.id]) + '</td><td>' + (ok ? '<span class="pill ok">Confirmado</span>' : '<span class="pill prop">Propuesta</span>') + '</td></tr>';
+    }).join('');
+    var m = K.margenes(), mods = [['alcance', 'Alcance'], ['horas', 'Horas'], ['suministro', 'Suministro']];
+    var mg = mods.map(function (md) {
+      return '<tr><td>' + md[1] + '</td>' + ['LATAM', 'NA'].map(function (c) { return '<td><input class="f" type="number" min="0" max="90" step="1" data-mg="' + md[0] + '|' + c + '" value="' + m[md[0]][c] + '"' + (adm ? '' : ' disabled') + ' style="width:90px" aria-label="Margen mínimo ' + md[1] + ' ' + c + '"> %</td>'; }).join('') + '</tr>';
+    }).join('');
+    var intro = adm ? '' : '<div class="card"><p class="note">Lideras ' + mine.map(function (c) { return c === 'NA' ? 'North America' : c; }).join(' y ') + ': puedes asignar el responsable de cada regional de tu cluster. Los demás datos los cambia quien tiene Administrar.</p></div>';
+    return intro + '<div class="card"><div class="card-h"><h2>Clusters</h2><span class="pill sim">Odoo · simulado</span></div>' +
+      '<p class="note">El país del cliente define el cluster. El responsable del cluster gestiona todos sus CECO.</p>' +
+      '<div class="tbl-wrap"><table><thead><tr><th>Cluster</th><th>Consolida en</th><th>Regionales</th><th class="num">CECO</th><th>Responsable</th></tr></thead><tbody>' + cl + '</tbody></table></div></div>' +
+      '<div class="card"><div class="card-h"><h2>Regionales</h2><span class="pill sim">Odoo · simulado</span></div>' +
+      '<p class="note">La regional es atributo de cada CECO y se elige en la cotización, dentro del cluster del cliente. El responsable ve y gestiona los CECO de su regional, aunque los lideren otras personas.</p>' +
+      '<div class="tbl-wrap"><table><thead><tr><th>Regional</th><th>Cluster</th><th class="num">CECO</th><th>Responsable</th><th>Estado</th></tr></thead><tbody>' + rg + '</tbody></table></div></div>' +
+      '<form class="card" id="mgForm"><div class="card-h"><h2>Margen mínimo por modalidad</h2>' + (m.propuesta ? '<span class="pill prop">Valores de propuesta</span>' : '<span class="pill ok">Configurado</span>') + '</div>' +
+      '<p class="note">Cotizaciones avisa cuando una cotización queda por debajo de este margen. Por cluster.</p>' +
+      '<div class="tbl-wrap"><table><thead><tr><th>Modalidad</th><th>LATAM</th><th>North America</th></tr></thead><tbody>' + mg + '</tbody></table></div>' +
+      (adm ? '<div><button class="btn primary">Guardar márgenes</button></div>' : '<p class="note">Solo quien tiene Administrar cambia los márgenes.</p>') + '</form>';
+  };
+
+  /* ---------- Preferencias (cada persona) ---------- */
+  function myPrefs() { return ST.prefs[SH.id] || (ST.prefs[SH.id] = { lang: 'es', digest: false }); }
+  var UMB_LS = 'kairos-analitica-umbrales', UMB0 = { util: 41, prod: 80, dOk: 5, dWarn: 15, fOk: 5, fWarn: 20, uAm: 15, pAm: 10 };
+  function umb() { try { return Object.assign({}, UMB0, JSON.parse(localStorage.getItem(UMB_LS) || '{}')); } catch (e) { return Object.assign({}, UMB0); } }
+  VIEW.analitica = function () {
+    var u = umb(), f = function (k, l, h, s) { return '<div class="pref"><div class="l"><b>' + l + '</b><small>' + h + '</small></div><div class="r"><input type="number" min="0" max="200" step="1" data-umb="' + k + '" value="' + u[k] + '" style="width:90px" aria-label="' + l + '"> <span>' + s + '</span></div></div>'; };
+    return '<div class="card"><div class="card-h"><h2>Semáforo de Analítica</h2><span class="note">Umbrales con los que se colorea la Cartera y los indicadores de cada proyecto.</span></div><div>' +
+      f('util', 'Meta de Utilidad', 'Verde si la utilidad es igual o mayor', '%') + f('uAm', 'Utilidad: margen ámbar', 'Ámbar hasta esta cantidad de puntos bajo la meta; después rojo', 'pp') +
+      f('prod', 'Meta de Productividad', 'Verde si es igual o mayor', '%') + f('pAm', 'Productividad: margen ámbar', 'Ámbar hasta esta cantidad de puntos bajo la meta; después rojo', 'pp') +
+      f('dOk', 'Horas y Costo: tolerancia verde', 'Puntos sobre lo esperado según el avance', 'pp') + f('dWarn', 'Horas y Costo: límite ámbar', 'Más allá es rojo', 'pp') +
+      f('fOk', 'Facturación: tolerancia verde', 'Puntos bajo lo esperado según el avance', 'pp') + f('fWarn', 'Facturación: límite ámbar', 'Más allá es rojo', 'pp') +
+      '<div class="pref"><div class="l"><b>Restablecer</b><small>Vuelve a 41 / 80 / 100</small></div><div class="r"><button class="btn ghost sm" data-umbreset="1">Restablecer valores</button></div></div></div></div>' +
+      fcCard() +
+      '<div class="card"><div class="card-h"><h2>Mover un CECO de proyecto</h2><span class="pill prop">Pendiente</span></div><p class="note">Un CECO nace dentro de su proyecto o sombrilla y no se mueve. Si hubo un error, solo Planeación lo corrige desde aquí. Aún por construir.</p></div>';
+  };
+  /* Forecast y Backlog: parametros de capacidad por cluster y tolerancia (CAMBIOS 31-oct). La TRM viene de Odoo. */
+  function FC() { try { return window.parent !== window ? window.parent.KairosForecast : null; } catch (e) { return null; } }
+  function fcCard() {
+    var F = FC(); if (!F) return '';
+    var c = F.load().cfg, ed = isAdmin() || SH.caps.indexOf('forecast') >= 0, dis = ed ? '' : ' disabled';
+    var row = function (cl, lbl, cur) { var p = c.cap[cl]; return '<tr><td><b>' + lbl + '</b></td><td><input class="f" type="number" min="1" step="1" data-fc="' + cl + '|rate" value="' + p.rate + '" style="width:120px"' + dis + ' aria-label="Tarifa diaria ' + lbl + '"> ' + cur + '</td><td><input class="f" type="number" min="0.1" max="1" step="0.05" data-fc="' + cl + '|prod" value="' + p.prod + '" style="width:80px"' + dis + ' aria-label="Productividad ' + lbl + '"></td><td><input class="f" type="number" min="1" max="31" step="1" data-fc="' + cl + '|days" value="' + p.days + '" style="width:70px"' + dis + ' aria-label="Días ' + lbl + '"></td><td><input class="f" type="number" min="1" step="1" data-fc="' + cl + '|eng" value="' + p.eng + '" style="width:70px"' + dis + ' aria-label="Ingenieros ' + lbl + '"></td></tr>'; };
+    return '<form class="card" id="fcForm"><div class="card-h"><h2>Forecast y Backlog</h2><span class="note">Capacidad (M, M+1, M+2) y tolerancia de «por proyectar».</span></div>' +
+      '<div class="tbl-wrap"><table><thead><tr><th>Cluster</th><th>Tarifa diaria por ingeniero</th><th>Productividad</th><th>Días al mes</th><th>Ingenieros disponibles</th></tr></thead><tbody>' + row('LATAM', 'LATAM', 'COP') + row('NA', 'North America', 'USD') + '</tbody></table></div>' +
+      '<div class="field"><label for="fcTol">Tolerancia (unidades de moneda)</label><input class="f" id="fcTol" type="number" min="0" step="1" value="' + c.tol + '" style="width:120px"' + dis + '></div>' +
+      '<p class="note">Ingenieros requeridos = forecast ENG consolidado / (tarifa × productividad × días). La TRM viene de Odoo; Kairos no define tasas propias.</p>' +
+      (ed ? '<div><button class="btn primary">Guardar parámetros</button></div>' : '<p class="note">Los cambia quien tiene Administrar o la capacidad Forecast.</p>') + '</form>';
+  }
+  VIEW.preferencias = function () {
+    var p = myPrefs(), th = HOST.theme();
+    var seg = function (key, cur, items) { return '<div class="seg" role="group">' + items.map(function (i) { return '<button data-' + key + '="' + i[0] + '" aria-pressed="' + (cur === i[0]) + '">' + i[1] + '</button>'; }).join('') + '</div>'; };
+    return '<div class="card"><div class="card-h"><h2>Mis preferencias</h2><span class="note">Se guardan en tu perfil y te siguen en cualquier equipo.</span></div><div>' +
+      '<div class="pref"><div class="l"><b>Idioma</b><small>Textos de la interfaz</small></div><div class="r">' + seg('lang', p.lang, [['es', 'Español'], ['en', 'English']]) + (p.lang === 'en' ? '<span class="pill prop">Traducción pendiente</span>' : '') + '</div></div>' +
+      '<div class="pref"><div class="l"><b>Tema</b><small>Sistema sigue la configuración de tu equipo</small></div><div class="r">' + seg('th', th, [['system', 'Sistema'], ['light', 'Claro'], ['dark', 'Oscuro']]) + '</div></div>' +
+      '<div class="pref"><div class="l"><b>Números y moneda</b><small>Formato colombiano</small></div><div class="r"><span>1.234.567 COP</span><span class="pill">Fijo</span></div></div>' +
+      '<div class="pref"><div class="l"><b>Zona horaria</b><small>Semanas y bloqueos de Planeación</small></div><div class="r"><span>Bogotá (UTC−5) · semana de lunes a domingo</span><span class="pill">Fijo</span></div></div>' +
+      '<div class="pref"><div class="l"><b>Avisos críticos de omnIA</b><small>Salen aunque omnIA esté oculto</small></div><div class="r"><span class="sw" role="switch" aria-checked="true" aria-disabled="true" aria-label="Avisos críticos"></span><span class="note">Siempre activos</span></div></div>' +
+      '<div class="pref"><div class="l"><b>Resumen diario por correo</b><small>Pendientes, aprobaciones y avisos del día</small></div><div class="r"><button class="sw" role="switch" id="digest" aria-checked="' + !!p.digest + '" aria-label="Resumen diario por correo"></button><span class="pill sim">Simulado</span></div></div>' +
+      '</div></div>';
+  };
+
+  /* ---------- Mi acceso (sin Administrar) ---------- */
+  VIEW.acceso = function () {
+    var me = user(SH.id), adm = admins();
+    return '<div class="cols"><div class="card"><div class="card-h"><h2>Tu acceso</h2>' + (me.role ? '<span class="pill pri">' + esc(roleOf(me.role).label) + '</span>' : '') + '</div>' +
+      '<div class="opts">' + CAPS.map(function (c) {
+        var on = me.caps.indexOf(c.key) >= 0, base = (ROLE_CAPS[me.role] || []).indexOf(c.key) >= 0;
+        return '<div class="opt locked"><svg class="ic" style="color:var(' + (on ? '--ok-ink' : '--off-ink') + ')"><use href="' + (on ? '#i-check' : '#i-x') + '"></use></svg><span><b>' + esc(c.label) + '</b><small>' + esc(c.what) + '</small></span><span class="src">' + (on ? (base ? 'Por tu rol' : 'Asignada a ti') : 'No') + '</span></div>';
+      }).join('') + '</div></div>' +
+      '<div class="card"><div class="card-h"><h2>¿Necesitas otro acceso?</h2></div><p class="note">Los roles y capacidades los asigna quien administra Kairos.</p>' +
+      adm.map(function (u) { return who(u, u.title); }).join('') + '</div></div>';
+  };
+
+  /* ---------- Registro de cambios ---------- */
+  VIEW.registro = function () {
+    var c = HOST.cfg.get();
+    return '<div class="card"><div class="card-h"><h2>Registro de cambios de acceso</h2><span class="note">Quién cambió qué y cuándo</span></div><ul class="log">' +
+      c.log.slice().reverse().map(function (l) { return '<li><time>' + fmtAt(l.at) + '</time><span><b>' + esc(l.by) + '</b> · ' + esc(l.t) + '</span></li>'; }).join('') + '</ul></div>';
+  };
+
+  /* ---------- Eventos ---------- */
+  document.addEventListener('click', function (e) {
+    var t;
+    if (e.target.closest('[data-segreset]')) { var SE = SEGE(); if (SE && isAdmin()) { SE.resetUmbrales(); render(); toast('Umbrales de alertas restablecidos'); } return; }
+    if (e.target.closest('[data-umbreset]')) { try { localStorage.removeItem(UMB_LS); } catch (x) {} render(); toast('Umbrales restablecidos'); return; }
+    if ((t = e.target.closest('[data-tab]'))) { ui.tab = t.dataset.tab; draft = null; ui.edit = null; render(); return; }
+    if ((t = e.target.closest('[data-f]'))) { ui.f = ui.f === t.dataset.f && t.dataset.f !== 'todos' ? 'todos' : t.dataset.f; render(); return; }
+    if ((t = e.target.closest('[data-edit]'))) { openEdit(t.dataset.edit); return; }
+    if ((t = e.target.closest('[data-act]'))) {
+      var a = t.dataset.act;
+      if (a === 'close') closeEdit();
+      else if (a === 'save') save(false);
+      else if (a === 'saveSelf') save(true);
+      else if (a === 'noSelf') { draft.confirmSelf = false; renderSheet(); }
+      else if (a === 'sync') toast('Sincronizado con Entra ID (simulado): sin personas nuevas');
+      return;
+    }
+    if ((t = e.target.closest('[data-unit]'))) { ui.unit = t.dataset.unit; render(); return; }
+    if ((t = e.target.closest('[data-phase]'))) {
+      var p = ST.wbs[ui.unit][+t.dataset.phase]; p.on = !p.on; sSave(); render();
+      toast((p.on ? 'Fase reactivada: ' : 'Fase desactivada: ') + p.name); return;
+    }
+    if ((t = e.target.closest('[data-act-t]'))) {
+      var ij = t.dataset.actT.split(':'), x = ST.wbs[ui.unit][+ij[0]].acts[+ij[1]]; x.on = !x.on; sSave(); render(); return;
+    }
+    if ((t = e.target.closest('[data-lang]'))) {
+      myPrefs().lang = t.dataset.lang; sSave(); render();
+      toast(t.dataset.lang === 'en' ? 'Guardado. La interfaz en inglés llega en una próxima versión' : 'Idioma: español'); return;
+    }
+    if ((t = e.target.closest('[data-th]'))) { HOST.setTheme(t.dataset.th); render(); return; }
+    if ((t = e.target.closest('#digest'))) { var pr = myPrefs(); pr.digest = !pr.digest; sSave(); render(); toast(pr.digest ? 'Resumen diario activado (simulado)' : 'Resumen diario desactivado'); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && draft) closeEdit();
+    var r = e.target.closest && e.target.closest('tr[data-edit]');
+    if (r && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openEdit(r.dataset.edit); }
+  });
+  document.addEventListener('change', function (e) {
+    if (e.target.dataset && e.target.dataset.resp) {
+      var K = KM(); if (!K || !canSetResp(e.target.dataset.resp, e.target.dataset.key)) { toast('Solo Administrar o el líder del cluster asignan este responsable'); return; }
+      K.setResponsable(e.target.dataset.resp, e.target.dataset.key, e.target.value);
+      toast((e.target.value || 'Sin responsable') + ' · ' + e.target.dataset.key); return;
+    }
+    var t = e.target;
+    if (t.dataset && t.dataset.umb) { var o = umb(), v = parseFloat(t.value); if (!isNaN(v) && v >= 0) { o[t.dataset.umb] = v; try { localStorage.setItem(UMB_LS, JSON.stringify(o)); toast('Umbral guardado'); } catch (x) {} } return; }
+    if (t.id === 'fRole') { ui.f = t.value || 'todos'; render(); return; }
+    if (t.id === 'dRole') { draft.role = t.value; renderSheet(); return; }
+    if (t.dataset && t.dataset.cap && draft) {
+      var k = t.dataset.cap, i = draft.extra.indexOf(k);
+      if (t.checked && i < 0) draft.extra.push(k); if (!t.checked && i >= 0) draft.extra.splice(i, 1);
+      draft.confirmSelf = false; renderSheet();
+    }
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'q') { ui.q = e.target.value; var pos = e.target.selectionStart; render(); var q = $('q'); q.focus(); q.setSelectionRange(pos, pos); }
+  });
+  document.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = e.target, v;
+    if (f.id === 'fcForm') {
+      var FF = FC(); if (!FF) return;
+      var cfg = JSON.parse(JSON.stringify(FF.load().cfg)), bad = false;
+      Array.prototype.forEach.call(f.querySelectorAll('[data-fc]'), function (i) { var k = i.dataset.fc.split('|'), v = parseFloat(i.value); if (!(v > 0)) bad = true; cfg.cap[k[0]][k[1]] = v; });
+      var tl = parseFloat($('fcTol').value); if (!(tl >= 0)) bad = true; cfg.tol = tl;
+      if (bad) { toast('Revisa los valores: deben ser mayores que cero'); return; }
+      try { FF.setCfg(cfg); toast('Parámetros de Forecast guardados'); render(); } catch (er) { toast(er.message); } return;
+    }
+    if (f.id === 'mgForm') {
+      var KK = KM(); if (!KK || !isAdmin()) { toast('Solo quien tiene Administrar cambia los márgenes'); return; }
+      var mm = { alcance: {}, horas: {}, suministro: {} }, bad = false;
+      Array.prototype.forEach.call(f.querySelectorAll('[data-mg]'), function (i) { var k = i.dataset.mg.split('|'), v = parseInt(i.value, 10); if (!(v >= 0 && v <= 90)) bad = true; mm[k[0]][k[1]] = v; });
+      if (bad) { toast('Cada margen debe estar entre 0 y 90 %'); return; }
+      KK.setMargenes(mm); render(); toast('Márgenes mínimos guardados'); return;
+    }
+    if (f.id === 'segForm') {
+      var E = SEGE(); if (!E || !isAdmin()) { toast('Solo quien tiene Administrar cambia los umbrales'); return; }
+      var er = E.setUmbrales({ imp: $('segImp').value, crit: $('segCrit').value, sinReporte: $('segRep').checked });
+      if (er) { toast(er); return; }
+      render(); toast('Umbrales de alertas guardados'); return;
+    }
+    if (f.id === 'omForm') {
+      var lim = parseInt($('omLim').value, 10);
+      if (!(lim >= 5 && lim <= 500)) { toast('El límite debe estar entre 5 y 500 interacciones'); $('omLim').focus(); return; }
+      ST.omnia = { limit: lim, warn: parseInt($('omWarn').value, 10), reviewer: $('omRev').value }; sSave(); render(); toast('Límites de omnIA guardados'); return;
+    }
+    if (f.dataset.addPhase) {
+      v = $('np').value.trim(); if (!v) { $('np').focus(); return; }
+      ST.wbs[ui.unit].push({ name: v, on: true, acts: [] }); sSave(); render(); toast('Fase agregada: ' + v); return;
+    }
+    if (f.dataset.addAct != null) {
+      var i = +f.dataset.addAct, inp = $('na' + i); v = inp.value.trim(); if (!v) { inp.focus(); return; }
+      ST.wbs[ui.unit][i].acts.push({ name: v, on: true }); sSave(); render();
+      var n = $('na' + i); if (n) n.focus();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
